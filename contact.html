@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문의하기 - eungmi blog</title>
+<meta name="description" content="eungmi blog 이용 중 궁금한 점이나 제휴 문의, 오류 신고는 이메일로 연락해 주세요.">
+<link rel="canonical" href="https://your-domain.example.com/contact.html">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <span class="text-2xl font-black text-indigo-600">eungmi<span class="text-sky-500"> blog</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+      <a href="index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="guides/index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="about.html" class="hover:text-indigo-600">소개</a>
+      <a href="contact.html" class="text-indigo-600">문의</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="adminMenu" class="hidden flex items-center gap-2">
+        <a href="index.html" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1 shadow-sm"><span>＋</span> <span class="hidden md:inline">일감 등록</span></a>
+      </div>
+      <div id="authLoggedOut" class="flex items-center gap-2">
+        <a href="index.html" class="text-slate-600 hover:text-indigo-600 text-xs md:text-sm font-semibold px-2 py-2 inline-block">로그인</a>
+        <a href="index.html" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-block">회원가입</a>
+      </div>
+      <div id="authLoggedIn" class="hidden flex items-center gap-2">
+        <a href="index.html" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1">👤 마이페이지</a>
+        <button id="navLogoutBtn" class="text-xs text-slate-500 hover:text-rose-600 font-semibold px-1 py-1">로그아웃</button>
+      </div>
+      <button id="navMenuBtn" class="md:hidden p-2 -mr-1 text-xl leading-none text-slate-600 hover:text-indigo-600" aria-label="메뉴 열기">☰</button>
+    </div>
+  </div>
+  <div id="navMobileMenu" class="hidden md:hidden border-t border-slate-100 px-4 py-3 flex flex-col gap-3 text-sm font-semibold text-slate-600 bg-white">
+      <a href="index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="guides/index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="about.html" class="hover:text-indigo-600">소개</a>
+      <a href="contact.html" class="text-indigo-600">문의</a>
+  </div>
+</nav>
+
+<main class="max-w-2xl mx-auto px-4 py-12 text-sm leading-relaxed text-slate-700 break-keep">
+  <h1 class="text-2xl font-extrabold text-slate-800 mb-6">문의하기</h1>
+  <p class="mb-6">서비스 이용 중 궁금한 점, 일감 관련 문의, 제휴 및 광고 문의, 오류 신고는 아래 이메일로 연락해 주시면 최대한 빠르게 답변드리겠습니다.</p>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 mb-8">
+    <h2 class="text-sm font-bold text-slate-800 mb-2">이메일 문의</h2>
+    <a href="mailto:sss911116@gmail.com" class="text-indigo-600 font-bold text-base underline">sss911116@gmail.com</a>
+    <p class="text-xs text-slate-400 mt-2">평일 기준 1~2일 이내 답변드리고 있습니다.</p>
+  </div>
+
+  <h2 class="text-lg font-bold text-slate-800 mb-3">자주 묻는 문의 유형</h2>
+  <ul class="list-disc list-inside space-y-2">
+    <li>계정/로그인 관련 문의</li>
+    <li>일감 신청 및 제출 관련 문의</li>
+    <li>포인트·리워드 정산 관련 문의</li>
+    <li>일감 등록(의뢰) 및 제휴 문의</li>
+    <li>사이트 오류 및 개선 제안</li>
+  </ul>
+
+  <p class="mt-8">자주 묻는 질문은 <a href="guides/faq.html" class="text-indigo-600 font-semibold underline">FAQ 페이지</a>에서 먼저 확인해 보실 수 있습니다.</p>
+</main>
+
+<footer class="bg-white border-t border-slate-200 py-8 px-4">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500">
+    <p>&copy; 2026 eungmi blog. All rights reserved.</p>
+    <div class="flex gap-4 flex-wrap">
+      <a href="about.html" class="hover:text-indigo-600">소개</a>
+      <a href="guides/index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="contact.html" class="hover:text-indigo-600">문의</a>
+      <a href="privacy.html" class="hover:text-indigo-600">개인정보처리방침</a>
+      <a href="terms.html" class="hover:text-indigo-600">이용약관</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { watchAuthState, wireLogoutButton } from "./js/auth.js";
+  watchAuthState(() => {});
+  wireLogoutButton();
+  document.getElementById("navMenuBtn")?.addEventListener("click", () => {
+    const menu = document.getElementById("navMobileMenu");
+    if (!menu) return;
+    menu.classList.toggle("hidden");
+    document.getElementById("navMenuBtn").textContent = menu.classList.contains("hidden") ? "☰" : "✕";
+  });
+</script>
+</body>
+</html>

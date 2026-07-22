@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부업 사기 예방 체크리스트 - 안전하게 부업하는 법 | eungmi blog</title>
+<meta name="description" content="선입금 요구, 허위 일감 등 흔한 부업 사기 유형과 대처법, 안전 거래 체크리스트를 정리했습니다.">
+<link rel="canonical" href="https://your-domain.example.com/guides/avoid-scam-guide.html">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="../index.html" class="flex items-center gap-2">
+      <span class="text-2xl font-black text-indigo-600">eungmi<span class="text-sky-500"> blog</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+      <a href="../index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="index.html" class="text-indigo-600">부업 가이드</a>
+      <a href="../about.html" class="hover:text-indigo-600">소개</a>
+      <a href="../contact.html" class="hover:text-indigo-600">문의</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="adminMenu" class="hidden flex items-center gap-2">
+        <a href="../index.html" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1 shadow-sm"><span>＋</span> <span class="hidden md:inline">일감 등록</span></a>
+      </div>
+      <div id="authLoggedOut" class="flex items-center gap-2">
+        <a href="../index.html" class="text-slate-600 hover:text-indigo-600 text-xs md:text-sm font-semibold px-2 py-2 inline-block">로그인</a>
+        <a href="../index.html" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-block">회원가입</a>
+      </div>
+      <div id="authLoggedIn" class="hidden flex items-center gap-2">
+        <a href="../index.html" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1">👤 마이페이지</a>
+        <button id="navLogoutBtn" class="text-xs text-slate-500 hover:text-rose-600 font-semibold px-1 py-1">로그아웃</button>
+      </div>
+      <button id="navMenuBtn" class="md:hidden p-2 -mr-1 text-xl leading-none text-slate-600 hover:text-indigo-600" aria-label="메뉴 열기">☰</button>
+    </div>
+  </div>
+  <div id="navMobileMenu" class="hidden md:hidden border-t border-slate-100 px-4 py-3 flex flex-col gap-3 text-sm font-semibold text-slate-600 bg-white">
+      <a href="../index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="index.html" class="text-indigo-600">부업 가이드</a>
+      <a href="../about.html" class="hover:text-indigo-600">소개</a>
+      <a href="../contact.html" class="hover:text-indigo-600">문의</a>
+  </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-4 py-12 text-sm leading-relaxed text-slate-700 break-keep">
+  <span class="bg-rose-50 text-rose-600 border-rose-200/50 text-xs font-bold px-2.5 py-1 rounded-md border">안전 가이드</span>
+  <h1 class="text-2xl font-extrabold text-slate-800 mt-3 mb-6">부업 사기 예방 체크리스트</h1>
+
+  <p class="mb-4">리뷰·체험단 부업 시장이 커지면서, 이를 노린 사기 수법도 함께 늘고 있습니다. 정상적인 일감과 사기성 일감을 구분하는 기본 원칙을 알아두면 피해를 예방할 수 있습니다.</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">흔한 사기 유형</h2>
+  <ul class="list-disc list-inside space-y-2 mb-4">
+    <li><strong>선입금 요구형</strong>: "먼저 물건을 구매하면 나중에 대금과 수수료를 함께 돌려주겠다"며 개인 계좌로 선입금을 요구하는 방식입니다. 정상적인 리워드형 일감은 참여자가 먼저 큰 금액을 입금하도록 요구하지 않습니다.</li>
+    <li><strong>고액 알바 미끼형</strong>: "하루 몇 분 투자로 수십만 원"처럼 비현실적인 수익을 강조하며 개인정보나 계좌 정보를 먼저 요구하는 방식입니다.</li>
+    <li><strong>플랫폼 사칭형</strong>: 공식 사이트와 유사한 주소로 가짜 페이지를 만들어 로그인 정보나 결제 정보를 탈취하는 방식입니다.</li>
+    <li><strong>과도한 개인정보 요구형</strong>: 일감 수행과 무관한 주민등록번호, 통장 비밀번호, 카드 정보 등을 요구하는 경우입니다.</li>
+  </ul>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">안전 거래 체크리스트</h2>
+  <ul class="list-disc list-inside space-y-2 mb-4">
+    <li>일감 참여를 이유로 개인 계좌에 먼저 돈을 입금하라고 요구하면 일단 의심하고 진행을 중단합니다.</li>
+    <li>주소창의 도메인이 공식 사이트 주소와 정확히 일치하는지 확인합니다. 미세하게 철자가 다른 유사 도메인은 피싱 사이트일 가능성이 높습니다.</li>
+    <li>메신저나 문자로만 진행을 유도하며 공식 플랫폼을 거치지 않으려는 경우 주의합니다.</li>
+    <li>비밀번호, 카드 정보, 통장 비밀번호 등은 어떤 경우에도 타인에게 알려주지 않습니다.</li>
+    <li>수익이 비현실적으로 크게 안내되는 일감은 한 번 더 검색해 보고 실제 후기나 평판을 확인합니다.</li>
+  </ul>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">eungmi blog에서의 안전장치</h2>
+  <p class="mb-4">eungmi blog은 이용자로부터 계좌 비밀번호, 카드 정보 등 민감한 결제 정보를 요구하지 않습니다. 리워드는 마이페이지에서 신청·제출·승인 상태로 투명하게 확인할 수 있으며, 진행 중 의심스러운 요청을 받으신다면 즉시 <a href="../contact.html" class="text-indigo-600 font-semibold underline">문의 페이지</a>로 제보해 주세요.</p>
+
+  <p class="mt-8">안전하게 부업 활동을 시작하고 싶다면 <a href="kmong-signup-guide.html" class="text-indigo-600 font-semibold underline">크몽 회원가입 방법</a>부터 차근차근 확인해 보세요.</p>
+</main>
+
+<footer class="bg-white border-t border-slate-200 py-8 px-4">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500">
+    <p>&copy; 2026 eungmi blog. All rights reserved.</p>
+    <div class="flex gap-4 flex-wrap">
+      <a href="../about.html" class="hover:text-indigo-600">소개</a>
+      <a href="index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="../contact.html" class="hover:text-indigo-600">문의</a>
+      <a href="../privacy.html" class="hover:text-indigo-600">개인정보처리방침</a>
+      <a href="../terms.html" class="hover:text-indigo-600">이용약관</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { watchAuthState, wireLogoutButton } from "../js/auth.js";
+  watchAuthState(() => {});
+  wireLogoutButton();
+  document.getElementById("navMenuBtn")?.addEventListener("click", () => {
+    const menu = document.getElementById("navMobileMenu");
+    if (!menu) return;
+    menu.classList.toggle("hidden");
+    document.getElementById("navMenuBtn").textContent = menu.classList.contains("hidden") ? "☰" : "✕";
+  });
+</script>
+</body>
+</html>

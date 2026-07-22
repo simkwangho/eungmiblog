@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자주 묻는 질문(FAQ) - eungmi blog</title>
+<meta name="description" content="회원가입, 일감 신청, 제출, 정산 등 eungmi blog 이용자들이 자주 묻는 질문과 답변을 모았습니다.">
+<link rel="canonical" href="https://your-domain.example.com/guides/faq.html">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="../index.html" class="flex items-center gap-2">
+      <span class="text-2xl font-black text-indigo-600">eungmi<span class="text-sky-500"> blog</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+      <a href="../index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="index.html" class="text-indigo-600">부업 가이드</a>
+      <a href="../about.html" class="hover:text-indigo-600">소개</a>
+      <a href="../contact.html" class="hover:text-indigo-600">문의</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="adminMenu" class="hidden flex items-center gap-2">
+        <a href="../index.html" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1 shadow-sm"><span>＋</span> <span class="hidden md:inline">일감 등록</span></a>
+      </div>
+      <div id="authLoggedOut" class="flex items-center gap-2">
+        <a href="../index.html" class="text-slate-600 hover:text-indigo-600 text-xs md:text-sm font-semibold px-2 py-2 inline-block">로그인</a>
+        <a href="../index.html" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-block">회원가입</a>
+      </div>
+      <div id="authLoggedIn" class="hidden flex items-center gap-2">
+        <a href="../index.html" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1">👤 마이페이지</a>
+        <button id="navLogoutBtn" class="text-xs text-slate-500 hover:text-rose-600 font-semibold px-1 py-1">로그아웃</button>
+      </div>
+      <button id="navMenuBtn" class="md:hidden p-2 -mr-1 text-xl leading-none text-slate-600 hover:text-indigo-600" aria-label="메뉴 열기">☰</button>
+    </div>
+  </div>
+  <div id="navMobileMenu" class="hidden md:hidden border-t border-slate-100 px-4 py-3 flex flex-col gap-3 text-sm font-semibold text-slate-600 bg-white">
+      <a href="../index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="index.html" class="text-indigo-600">부업 가이드</a>
+      <a href="../about.html" class="hover:text-indigo-600">소개</a>
+      <a href="../contact.html" class="hover:text-indigo-600">문의</a>
+  </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-4 py-12 text-sm leading-relaxed text-slate-700 break-keep">
+  <span class="bg-slate-100 text-slate-600 border-slate-200 text-xs font-bold px-2.5 py-1 rounded-md border">FAQ</span>
+  <h1 class="text-2xl font-extrabold text-slate-800 mt-3 mb-8">자주 묻는 질문(FAQ)</h1>
+
+  <div class="space-y-6">
+    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+      <h2 class="font-bold text-slate-800 mb-2">Q. eungmi blog은 크몽과 같은 회사인가요?</h2>
+      <p>아닙니다. eungmi blog은 크몽에 등록된 리뷰·체험단 성격의 일감을 소개하는 개인 큐레이션 사이트이며, 크몽의 공식 서비스가 아닙니다.</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+      <h2 class="font-bold text-slate-800 mb-2">Q. 회원가입 후 바로 일감을 신청할 수 있나요?</h2>
+      <p>네, 회원가입 후 로그인하면 바로 일감 신청이 가능합니다. 다만 신청 전 마이페이지에서 사용할 리뷰어 계정을 먼저 등록해 두어야 합니다.</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+      <h2 class="font-bold text-slate-800 mb-2">Q. 계정은 몇 개까지 등록할 수 있나요?</h2>
+      <p>개수 제한은 별도로 두고 있지 않지만, 실제 본인이 사용하는 계정만 등록해 주세요. 타인 명의의 계정이나 허위 계정 등록은 이용약관에 따라 제한될 수 있습니다.</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+      <h2 class="font-bold text-slate-800 mb-2">Q. 신청한 일감은 언제까지 제출해야 하나요?</h2>
+      <p>일감마다 안내되는 미션 가이드에 마감 기한이 표시되어 있습니다. 기한 내 제출하지 않으면 신청이 취소되거나 리워드 지급이 제한될 수 있습니다.</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+      <h2 class="font-bold text-slate-800 mb-2">Q. 제출한 내용이 반려되면 어떻게 되나요?</h2>
+      <p>반려 사유를 확인한 뒤 보완하여 다시 제출할 수 있습니다. 자주 반려되는 이유는 미션 가이드의 필수 조건(키워드, 사진 장수 등)을 지키지 않은 경우이니, 제출 전 다시 한번 확인해 주세요.</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+      <h2 class="font-bold text-slate-800 mb-2">Q. 리워드는 언제, 어떻게 받나요?</h2>
+      <p>운영자가 제출 내역을 검수해 승인 처리하면 마이페이지에서 승인완료 상태로 표시됩니다. 정산 방식과 일정은 공지사항 및 이용약관을 통해 안내되며, 자세한 사항은 문의 페이지로 확인해 주세요.</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+      <h2 class="font-bold text-slate-800 mb-2">Q. 은행 계좌 정보를 입력해야 하나요?</h2>
+      <p>eungmi blog은 회원가입이나 일감 제출 과정에서 계좌 비밀번호, 카드 정보 등 민감한 결제 정보를 요구하지 않습니다. 관련 정보를 요구받으신다면 즉시 문의 페이지로 알려주세요.</p>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl p-5">
+      <h2 class="font-bold text-slate-800 mb-2">Q. 처음이라 어떤 카테고리부터 시작해야 할지 모르겠어요.</h2>
+      <p>영수증 리뷰는 특별한 준비물 없이 시작할 수 있어 입문용으로 추천드립니다. 카테고리별 특징은 <a href="index.html" class="text-indigo-600 font-semibold underline">부업 가이드 모음</a>에서 확인해 보세요.</p>
+    </div>
+  </div>
+
+  <p class="mt-10">원하는 답변을 찾지 못하셨다면 <a href="../contact.html" class="text-indigo-600 font-semibold underline">문의 페이지</a>로 언제든 연락해 주세요.</p>
+</main>
+
+<footer class="bg-white border-t border-slate-200 py-8 px-4">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500">
+    <p>&copy; 2026 eungmi blog. All rights reserved.</p>
+    <div class="flex gap-4 flex-wrap">
+      <a href="../about.html" class="hover:text-indigo-600">소개</a>
+      <a href="index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="../contact.html" class="hover:text-indigo-600">문의</a>
+      <a href="../privacy.html" class="hover:text-indigo-600">개인정보처리방침</a>
+      <a href="../terms.html" class="hover:text-indigo-600">이용약관</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { watchAuthState, wireLogoutButton } from "../js/auth.js";
+  watchAuthState(() => {});
+  wireLogoutButton();
+  document.getElementById("navMenuBtn")?.addEventListener("click", () => {
+    const menu = document.getElementById("navMobileMenu");
+    if (!menu) return;
+    menu.classList.toggle("hidden");
+    document.getElementById("navMenuBtn").textContent = menu.classList.contains("hidden") ? "☰" : "✕";
+  });
+</script>
+</body>
+</html>

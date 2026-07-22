@@ -1,0 +1,43 @@
+rules_version = '2';
+// Firebase 콘솔 > Firestore Database > 규칙 탭에 이 내용을 붙여넣으세요.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // 사용자 프로필: 본인 또는 관리자만 조회/수정 가능. role 필드는 본인이 임의로 바꿀 수 없음(관리자만 변경 가능).
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow create: if isOwner(uid) && request.resource.data.role == 'user';
+      allow update: if (isOwner(uid) && request.resource.data.role == resource.data.role) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // 일감 목록: 비로그인 사용자도 조회 가능(홈페이지 공개용). 등록/수정/삭제는 관리자만.
+    match /jobs/{jobId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // 신청/제출 내역: 본인 또는 관리자만 조회 가능.
+    // 생성은 본인 명의로만, 상태 변경은 '신청완료' 상태에서 본인이 제출할 때만 허용하고 그 외에는 관리자만 변경 가능.
+    match /applications/{appId} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isAdmin() ||
+        (isSignedIn() && resource.data.userId == request.auth.uid && resource.data.status == '신청완료');
+      allow delete: if isAdmin();
+    }
+  }
+}

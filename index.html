@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>eungmi blog - 크몽 리뷰/체험단 일감 모음 | 블로거를 위한 부업 플랫폼</title>
+<meta name="description" content="크몽에서 검증된 영수증 리뷰, 카카오맵 리뷰, 방문 리뷰, 블로그 기자단 일감을 한곳에 모았습니다. 회원가입 후 원하는 일감에 바로 신청하고 리워드를 받아보세요.">
+<meta name="keywords" content="크몽 일감, 크몽 부업, 영수증리뷰, 카카오맵리뷰, 방문리뷰, 블로그기자단, 체험단, 리뷰알바, 블로그 부업">
+<link rel="canonical" href="https://your-domain.example.com/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="eungmi blog - 크몽 리뷰/체험단 일감 모음">
+<meta property="og:description" content="크몽 리뷰·체험단 일감을 한곳에서 확인하고 바로 신청하세요.">
+<meta property="og:url" content="https://your-domain.example.com/index.html">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <span class="text-2xl font-black text-indigo-600">eungmi<span class="text-sky-500"> blog</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+      <a href="index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="guides/index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="about.html" class="hover:text-indigo-600">소개</a>
+      <a href="contact.html" class="hover:text-indigo-600">문의</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="adminMenu" class="hidden flex items-center gap-2">
+        <button data-open-modal="addJobModal" class="js-open-modal bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
+          <span>＋</span> <span class="hidden md:inline">일감 등록</span>
+        </button>
+        <button id="adminSubmitBtn" class="bg-slate-800 hover:bg-slate-900 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
+          <span>⚙️</span> <span class="hidden md:inline">제출 관리자</span>
+        </button>
+        <span class="h-4 w-[1px] bg-slate-200 mx-1"></span>
+      </div>
+
+      <div id="authLoggedOut" class="flex items-center gap-2">
+        <a href="index.html" id="navLoginBtn" class="js-open-modal" data-open-modal="loginModal">
+          <span class="text-slate-600 hover:text-indigo-600 text-xs md:text-sm font-semibold px-2 py-2 inline-block">로그인</span>
+        </a>
+        <a href="index.html" id="navSignupBtn" class="js-open-modal" data-open-modal="signupModal">
+          <span class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-block">회원가입</span>
+        </a>
+      </div>
+
+      <div id="authLoggedIn" class="hidden flex items-center gap-2">
+        <button id="navMyPageBtn" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
+          <span>👤</span> <span>마이페이지</span>
+        </button>
+        <button id="navLogoutBtn" class="text-xs text-slate-500 hover:text-rose-600 font-semibold px-1 py-1">로그아웃</button>
+      </div>
+      <button id="navMenuBtn" class="md:hidden p-2 -mr-1 text-xl leading-none text-slate-600 hover:text-indigo-600" aria-label="메뉴 열기">☰</button>
+    </div>
+  </div>
+  <div id="navMobileMenu" class="hidden md:hidden border-t border-slate-100 px-4 py-3 flex flex-col gap-3 text-sm font-semibold text-slate-600 bg-white">
+      <a href="index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="guides/index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="about.html" class="hover:text-indigo-600">소개</a>
+      <a href="contact.html" class="hover:text-indigo-600">문의</a>
+  </div>
+</nav>
+
+<section class="bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 text-white py-10 px-4">
+  <div class="max-w-4xl mx-auto text-center">
+    <span class="bg-indigo-500/30 text-indigo-300 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-400/30 mb-3 inline-block">
+      📢 블로거를 위한 크몽 일감 큐레이션
+    </span>
+    <h1 class="text-lg sm:text-2xl md:text-3xl font-extrabold leading-snug mb-3 break-keep">
+      <span class="whitespace-nowrap">영수증 · 카카오맵 · 방문 · 블로그 리뷰 일감을</span><br>
+      <span class="text-sky-400 whitespace-nowrap">가장 쉽고 빠르게 확인하고 신청하세요</span>
+    </h1>
+    <p class="text-slate-300 text-xs md:text-sm max-w-xl mx-auto break-keep">
+      크몽에서 검증된 일감만 골라 정리해 드립니다. 회원가입 후 원하는 일감에 신청하고, 완료 후 리워드를 받아보세요.
+    </p>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-4 pt-8 pb-4">
+  <div class="flex gap-2 overflow-x-auto pb-2 text-sm" id="categoryFilters">
+    <button data-cat="전체" class="js-filter-cat bg-indigo-600 text-white px-4 py-2 rounded-full font-bold whitespace-nowrap shadow-sm">전체 일감</button>
+    <button data-cat="🧾 영수증 리뷰" class="js-filter-cat bg-white border border-slate-200 text-slate-700 hover:border-indigo-500 hover:text-indigo-600 px-4 py-2 rounded-full font-medium whitespace-nowrap transition">🧾 영수증 리뷰</button>
+    <button data-cat="📍 카카오맵 리뷰" class="js-filter-cat bg-white border border-slate-200 text-slate-700 hover:border-indigo-500 hover:text-indigo-600 px-4 py-2 rounded-full font-medium whitespace-nowrap transition">📍 카카오맵 리뷰</button>
+    <button data-cat="🔥 방문 리뷰" class="js-filter-cat bg-white border border-slate-200 text-slate-700 hover:border-indigo-500 hover:text-indigo-600 px-4 py-2 rounded-full font-medium whitespace-nowrap transition">🔥 방문 리뷰</button>
+    <button data-cat="✍️ 블로그 기자단" class="js-filter-cat bg-white border border-slate-200 text-slate-700 hover:border-indigo-500 hover:text-indigo-600 px-4 py-2 rounded-full font-medium whitespace-nowrap transition">✍️ 블로그 기자단</button>
+  </div>
+</section>
+
+<main class="max-w-6xl mx-auto px-4 pb-10">
+  <h2 class="text-lg font-bold text-slate-800 mb-4">🔥 신청 가능한 일감 목록</h2>
+  <div id="jobList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <p class="col-span-full text-center text-slate-400 py-10">일감 목록을 불러오는 중입니다...</p>
+  </div>
+</main>
+
+<section class="max-w-4xl mx-auto px-4 pb-16 text-sm text-slate-600 leading-relaxed break-keep">
+  <h2 class="text-base font-bold text-slate-800 mb-2">eungmi blog은 이런 곳이에요</h2>
+  <p class="mb-2">eungmi blog은 크몽(Kmong)에 올라오는 리뷰·체험단 성격의 일감을 매일 확인하고, 블로거와 리뷰어 분들이 한 곳에서 편하게 찾아볼 수 있도록 정리해 소개하는 큐레이션 사이트입니다. 신청부터 제출, 진행 상황 확인까지 마이페이지에서 한 번에 관리할 수 있습니다.</p>
+  <p>처음 방문하셨다면 <a href="guides/index.html" class="text-indigo-600 font-semibold underline">부업 가이드 모음</a>에서 크몽 가입 방법과 카테고리별 일감 정보를 먼저 확인해 보세요.</p>
+</section>
+
+<footer class="bg-white border-t border-slate-200 py-8 px-4">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500">
+    <p>&copy; 2026 eungmi blog. All rights reserved.</p>
+    <div class="flex gap-4 flex-wrap">
+      <a href="about.html" class="hover:text-indigo-600">소개</a>
+      <a href="guides/index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="contact.html" class="hover:text-indigo-600">문의</a>
+      <a href="privacy.html" class="hover:text-indigo-600">개인정보처리방침</a>
+      <a href="terms.html" class="hover:text-indigo-600">이용약관</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= MODAL SECTION ================= -->
+
+<div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 relative">
+    <button data-close-modal="loginModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <h3 class="text-xl font-bold text-slate-800 mb-4">🔑 로그인</h3>
+    <form id="loginForm" class="space-y-3">
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">이메일</label>
+        <input type="email" id="loginEmail" required placeholder="example@email.com" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">비밀번호</label>
+        <input type="password" id="loginPw" required placeholder="비밀번호 입력" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition mt-2">로그인하기</button>
+    </form>
+  </div>
+</div>
+
+<div id="signupModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 relative">
+    <button data-close-modal="signupModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <h3 class="text-xl font-bold text-slate-800 mb-4">📝 회원가입</h3>
+    <form id="signupForm" class="space-y-3">
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">이름/닉네임</label>
+        <input type="text" id="signupName" required placeholder="예: 홍길동" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">이메일</label>
+        <input type="email" id="signupEmail" required placeholder="example@email.com" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">비밀번호 (6자 이상)</label>
+        <input type="password" id="signupPw" required minlength="6" placeholder="비밀번호" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition mt-2">가입 완료</button>
+    </form>
+  </div>
+</div>
+
+<div id="myPageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 relative max-h-[90vh] flex flex-col">
+    <button data-close-modal="myPageModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <div class="border-b border-slate-100 pb-4 mb-4">
+      <h3 class="text-xl font-bold text-slate-800">👤 마이페이지</h3>
+      <p id="myPageUserInfo" class="text-xs text-slate-500 mt-1"></p>
+    </div>
+    <div class="overflow-y-auto space-y-6 pr-1">
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="text-sm font-bold text-slate-800">📱 보유 리뷰어 계정</h4>
+          <span class="text-[11px] text-indigo-600 font-semibold">* 계정을 여러 개 등록하면 그만큼 일감을 더 신청할 수 있어요!</span>
+        </div>
+        <form id="subAccountForm" class="flex gap-2 mb-3">
+          <input type="text" id="subAccName" required placeholder="계정 별칭 (예: 네이버 계정2, 방문_홍길동)" class="flex-1 border border-slate-200 rounded-xl px-3 py-1.5 text-xs outline-none">
+          <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition">계정 추가</button>
+        </form>
+        <div id="subAccountList" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <div>
+        <h4 class="text-sm font-bold text-slate-800 mb-3">📋 내 일감 신청 및 진행 현황</h4>
+        <div class="overflow-x-auto border border-slate-100 rounded-xl">
+          <table class="w-full text-left text-xs min-w-[480px]">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+              <tr>
+                <th class="p-3">일감정보</th>
+                <th class="p-3">사용 계정</th>
+                <th class="p-3">리워드</th>
+                <th class="p-3">진행 상태</th>
+                <th class="p-3 text-right">액션</th>
+              </tr>
+            </thead>
+            <tbody id="myApplicationsTable" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="applyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 relative">
+    <button data-close-modal="applyModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <h3 class="text-lg font-bold text-slate-800 mb-1">📌 일감 신청하기</h3>
+    <p id="applyJobTitle" class="text-xs text-indigo-600 font-bold mb-4"></p>
+    <form id="applyForm" class="space-y-4">
+      <input type="hidden" id="applyJobId">
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">이번에 사용할 계정 선택</label>
+        <select id="applyAccountSelect" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none"></select>
+      </div>
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition">신청 완료</button>
+    </form>
+  </div>
+</div>
+
+<div id="addJobModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative">
+    <button data-close-modal="addJobModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <h3 class="text-lg font-bold text-slate-800 mb-4">⚙️ [관리자] 신규 일감 등록</h3>
+    <form id="addJobForm" class="space-y-4">
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">카테고리</label>
+        <select id="jobCategory" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none">
+          <option value="🧾 영수증 리뷰">🧾 영수증 리뷰</option>
+          <option value="📍 카카오맵 리뷰">📍 카카오맵 리뷰</option>
+          <option value="🔥 방문 리뷰">🔥 방문 리뷰</option>
+          <option value="✍️ 블로그 기자단">✍️ 블로그 기자단</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">일감 제목</label>
+        <input type="text" id="jobTitle" required placeholder="예: 네이버 플레이스 영수증 리뷰 등록" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">상세 설명</label>
+        <textarea id="jobDesc" rows="3" required placeholder="미션 가이드 입력" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none"></textarea>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">지급 포인트 (P)</label>
+        <input type="number" id="jobReward" required placeholder="2000" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none">
+      </div>
+      <div class="pt-2 flex gap-2">
+        <button type="button" data-close-modal="addJobModal" class="js-close-modal w-1/2 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl text-sm">취소</button>
+        <button type="submit" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition">등록 완료</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="submitModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto">
+    <button data-close-modal="submitModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <h3 class="text-lg font-bold text-slate-800 mb-1">📤 일감 제출하기</h3>
+    <p id="submitJobTitle" class="text-xs text-indigo-600 font-bold mb-4"></p>
+    <form id="submitForm" class="space-y-4">
+      <input type="hidden" id="submitAppId">
+      <div>
+        <label class="block text-xs font-bold text-slate-600 mb-1">작성한 리뷰/게시물 URL</label>
+        <input type="url" id="submitUrl" required placeholder="https://..." class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none">
+        <p class="text-[11px] text-slate-400 mt-1">제출한 링크는 관리자가 직접 확인 후 승인 처리합니다.</p>
+      </div>
+      <div class="pt-2 flex gap-2">
+        <button type="button" data-close-modal="submitModal" class="js-close-modal w-1/2 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl text-sm">취소</button>
+        <button type="submit" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition">제출하기</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="adminSubmitModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 relative max-h-[85vh] flex flex-col">
+    <button data-close-modal="adminSubmitModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <h3 class="text-lg font-bold text-slate-800 mb-2">⚙️ [관리자] 제출 내역 검수 및 상태 변경</h3>
+    <div class="overflow-y-auto overflow-x-auto flex-1 border border-slate-100 rounded-xl p-2">
+      <table class="w-full text-left text-xs min-w-[560px]">
+        <thead class="bg-slate-50 text-slate-500 uppercase font-semibold">
+          <tr>
+            <th class="p-2.5">신청자/계정</th>
+            <th class="p-2.5">일감 정보</th>
+            <th class="p-2.5">제출 URL</th>
+            <th class="p-2.5">상태</th>
+            <th class="p-2.5 text-right">상태 변경</th>
+          </tr>
+        </thead>
+        <tbody id="adminSubmitTable" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { watchAuthState, wireLogoutButton } from "./js/auth.js";
+  import * as app from "./js/app.js";
+
+  watchAuthState(app.setCurrentUser);
+  wireLogoutButton();
+  document.getElementById("navMenuBtn")?.addEventListener("click", () => {
+    const menu = document.getElementById("navMobileMenu");
+    if (!menu) return;
+    menu.classList.toggle("hidden");
+    document.getElementById("navMenuBtn").textContent = menu.classList.contains("hidden") ? "☰" : "✕";
+  });
+  app.initJobsListener();
+
+  document.querySelectorAll(".js-open-modal").forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      app.openModal(el.dataset.openModal);
+    });
+  });
+  document.querySelectorAll(".js-close-modal").forEach((el) => {
+    el.addEventListener("click", () => app.closeModal(el.dataset.closeModal));
+  });
+  document.querySelectorAll(".js-filter-cat").forEach((el) => {
+    el.addEventListener("click", () => {
+      document.querySelectorAll(".js-filter-cat").forEach((b) => {
+        b.classList.remove("bg-indigo-600", "text-white", "shadow-sm");
+        b.classList.add("bg-white", "border", "border-slate-200", "text-slate-700");
+      });
+      el.classList.add("bg-indigo-600", "text-white", "shadow-sm");
+      el.classList.remove("bg-white", "border", "border-slate-200", "text-slate-700");
+      app.filterCategory(el.dataset.cat);
+    });
+  });
+
+  document.getElementById("loginForm").addEventListener("submit", app.onLoginSubmit);
+  document.getElementById("signupForm").addEventListener("submit", app.onSignupSubmit);
+  document.getElementById("applyForm").addEventListener("submit", app.handleJobApplySubmit);
+  document.getElementById("subAccountForm").addEventListener("submit", app.addSubAccount);
+  document.getElementById("submitForm").addEventListener("submit", app.handleJobSubmission);
+  document.getElementById("addJobForm").addEventListener("submit", app.addNewJob);
+
+  document.getElementById("navMyPageBtn").addEventListener("click", () => app.openMyPage());
+  document.getElementById("adminSubmitBtn").addEventListener("click", () => app.openAdminSubmitManager());
+</script>
+</body>
+</html>

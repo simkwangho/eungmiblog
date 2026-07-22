@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>부업 정산과 세금 신고 가이드 - 기타소득 신고 안내 | eungmi blog</title>
+<meta name="description" content="리뷰·체험단 부업 소득의 정산 방식과 기타소득 신고 시 알아둘 점을 안내합니다.">
+<link rel="canonical" href="https://your-domain.example.com/guides/settlement-tax-guide.html">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="../index.html" class="flex items-center gap-2">
+      <span class="text-2xl font-black text-indigo-600">eungmi<span class="text-sky-500"> blog</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+      <a href="../index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="index.html" class="text-indigo-600">부업 가이드</a>
+      <a href="../about.html" class="hover:text-indigo-600">소개</a>
+      <a href="../contact.html" class="hover:text-indigo-600">문의</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="adminMenu" class="hidden flex items-center gap-2">
+        <a href="../index.html" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1 shadow-sm"><span>＋</span> <span class="hidden md:inline">일감 등록</span></a>
+      </div>
+      <div id="authLoggedOut" class="flex items-center gap-2">
+        <a href="../index.html" class="text-slate-600 hover:text-indigo-600 text-xs md:text-sm font-semibold px-2 py-2 inline-block">로그인</a>
+        <a href="../index.html" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-block">회원가입</a>
+      </div>
+      <div id="authLoggedIn" class="hidden flex items-center gap-2">
+        <a href="../index.html" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1">👤 마이페이지</a>
+        <button id="navLogoutBtn" class="text-xs text-slate-500 hover:text-rose-600 font-semibold px-1 py-1">로그아웃</button>
+      </div>
+      <button id="navMenuBtn" class="md:hidden p-2 -mr-1 text-xl leading-none text-slate-600 hover:text-indigo-600" aria-label="메뉴 열기">☰</button>
+    </div>
+  </div>
+  <div id="navMobileMenu" class="hidden md:hidden border-t border-slate-100 px-4 py-3 flex flex-col gap-3 text-sm font-semibold text-slate-600 bg-white">
+      <a href="../index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="index.html" class="text-indigo-600">부업 가이드</a>
+      <a href="../about.html" class="hover:text-indigo-600">소개</a>
+      <a href="../contact.html" class="hover:text-indigo-600">문의</a>
+  </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-4 py-12 text-sm leading-relaxed text-slate-700 break-keep">
+  <span class="bg-indigo-50 text-indigo-600 border-indigo-200/50 text-xs font-bold px-2.5 py-1 rounded-md border">활용 팁</span>
+  <h1 class="text-2xl font-extrabold text-slate-800 mt-3 mb-6">부업 정산과 세금 신고 가이드</h1>
+
+  <p class="mb-4">리뷰·체험단 활동으로 얻는 소득도 엄연한 소득이기 때문에, 규모가 커지면 세금 신고 의무가 생길 수 있습니다. 정확한 세무 처리는 세무사나 국세청 홈택스 상담을 통해 확인하는 것이 원칙이지만, 미리 알아두면 도움이 되는 기본 개념을 정리했습니다.</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">1. 부업 소득은 대부분 '기타소득'으로 분류</h2>
+  <p class="mb-4">일회성으로 발생하는 리뷰·체험단 리워드는 통상 기타소득으로 분류되는 경우가 많습니다. 다만 활동 빈도와 규모가 커져 지속적·반복적으로 소득이 발생한다면 사업소득으로 판단될 수도 있으므로, 활동 규모가 커질 경우 세무 전문가와 상담하는 것이 안전합니다.</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">2. 종합소득세 신고 시기</h2>
+  <p class="mb-4">한 해 동안 발생한 기타소득이나 사업소득은 다음 해 5월 종합소득세 신고 기간에 합산하여 신고합니다. 여러 플랫폼을 통해 소득이 발생했다면 각 플랫폼에서 받은 정산 내역(입금 내역, 명세서 등)을 미리 정리해 두면 신고할 때 수월합니다.</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">3. 정산 내역 관리 팁</h2>
+  <ul class="list-disc list-inside space-y-2 mb-4">
+    <li>월별로 어떤 일감을 통해 얼마의 리워드를 받았는지 간단한 표로 정리해 두면 연말 정산이나 세금 신고 시 큰 도움이 됩니다.</li>
+    <li>포인트 환급 시점과 실제 입금 시점이 다를 수 있으니, 두 시점을 구분해서 기록해 두는 것이 좋습니다.</li>
+    <li>연간 부업 소득이 일정 금액을 넘어서면 건강보험 피부양자 자격 등에도 영향을 줄 수 있으니 관련 기준을 함께 확인해 보세요.</li>
+  </ul>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">4. 정확한 정보는 공식 채널에서 확인</h2>
+  <p class="mb-4">세법은 매년 개정될 수 있고 개인 상황(직장인 여부, 다른 소득 유무 등)에 따라 처리 방법이 달라질 수 있습니다. 정확한 신고 방법은 국세청 홈택스(hometax.go.kr) 또는 세무 전문가 상담을 통해 확인하시길 권장합니다.</p>
+
+  <p class="mt-8">정산 관련 문의는 <a href="../contact.html" class="text-indigo-600 font-semibold underline">문의 페이지</a>를 통해 남겨주시면, 확인 가능한 범위 내에서 안내해 드리겠습니다.</p>
+</main>
+
+<footer class="bg-white border-t border-slate-200 py-8 px-4">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500">
+    <p>&copy; 2026 eungmi blog. All rights reserved.</p>
+    <div class="flex gap-4 flex-wrap">
+      <a href="../about.html" class="hover:text-indigo-600">소개</a>
+      <a href="index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="../contact.html" class="hover:text-indigo-600">문의</a>
+      <a href="../privacy.html" class="hover:text-indigo-600">개인정보처리방침</a>
+      <a href="../terms.html" class="hover:text-indigo-600">이용약관</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { watchAuthState, wireLogoutButton } from "../js/auth.js";
+  watchAuthState(() => {});
+  wireLogoutButton();
+  document.getElementById("navMenuBtn")?.addEventListener("click", () => {
+    const menu = document.getElementById("navMobileMenu");
+    if (!menu) return;
+    menu.classList.toggle("hidden");
+    document.getElementById("navMenuBtn").textContent = menu.classList.contains("hidden") ? "☰" : "✕";
+  });
+</script>
+</body>
+</html>

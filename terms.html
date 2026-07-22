@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이용약관 - eungmi blog</title>
+<meta name="description" content="eungmi blog 서비스 이용약관: 회원 자격, 일감 신청 및 정산, 금지행위, 책임의 한계를 안내합니다.">
+<link rel="canonical" href="https://your-domain.example.com/terms.html">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <span class="text-2xl font-black text-indigo-600">eungmi<span class="text-sky-500"> blog</span></span>
+    </a>
+    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+      <a href="index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="guides/index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="about.html" class="hover:text-indigo-600">소개</a>
+      <a href="contact.html" class="hover:text-indigo-600">문의</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <div id="adminMenu" class="hidden flex items-center gap-2">
+        <a href="index.html" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1 shadow-sm"><span>＋</span> <span class="hidden md:inline">일감 등록</span></a>
+      </div>
+      <div id="authLoggedOut" class="flex items-center gap-2">
+        <a href="index.html" class="text-slate-600 hover:text-indigo-600 text-xs md:text-sm font-semibold px-2 py-2 inline-block">로그인</a>
+        <a href="index.html" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-block">회원가입</a>
+      </div>
+      <div id="authLoggedIn" class="hidden flex items-center gap-2">
+        <a href="index.html" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition inline-flex items-center gap-1">👤 마이페이지</a>
+        <button id="navLogoutBtn" class="text-xs text-slate-500 hover:text-rose-600 font-semibold px-1 py-1">로그아웃</button>
+      </div>
+      <button id="navMenuBtn" class="md:hidden p-2 -mr-1 text-xl leading-none text-slate-600 hover:text-indigo-600" aria-label="메뉴 열기">☰</button>
+    </div>
+  </div>
+  <div id="navMobileMenu" class="hidden md:hidden border-t border-slate-100 px-4 py-3 flex flex-col gap-3 text-sm font-semibold text-slate-600 bg-white">
+      <a href="index.html" class="hover:text-indigo-600">일감 모아보기</a>
+      <a href="guides/index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="about.html" class="hover:text-indigo-600">소개</a>
+      <a href="contact.html" class="hover:text-indigo-600">문의</a>
+  </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-4 py-12 text-sm leading-relaxed text-slate-700 break-keep">
+  <h1 class="text-2xl font-extrabold text-slate-800 mb-2">이용약관</h1>
+  <p class="text-xs text-slate-400 mb-8">시행일: 2026년 7월 22일</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">제1조 (목적)</h2>
+  <p class="mb-4">이 약관은 eungmi blog(이하 "사이트")이 제공하는 크몽 일감 큐레이션 및 신청 중개 서비스(이하 "서비스")의 이용과 관련하여 사이트와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">제2조 (서비스의 성격)</h2>
+  <p class="mb-4">사이트는 크몽에 등록된 리뷰·체험단 성격의 일감 정보를 수집·정리하여 소개하고, 회원이 해당 일감에 신청·제출하는 과정을 관리하는 정보 중개 서비스입니다. 사이트는 크몽의 공식 서비스가 아니며, 일감의 실제 진행 및 최종 정산 조건은 원 의뢰인 및 크몽의 정책을 따릅니다.</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">제3조 (회원가입 및 계정)</h2>
+  <ul class="list-disc list-inside space-y-2 mb-4">
+    <li>이용자는 이메일 주소를 이용하여 회원가입을 신청할 수 있습니다.</li>
+    <li>회원은 본인의 계정 정보를 안전하게 관리할 책임이 있으며, 계정 공유 및 양도는 금지됩니다.</li>
+    <li>허위 정보로 가입하거나 타인의 정보를 도용한 경우 서비스 이용이 제한될 수 있습니다.</li>
+  </ul>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">제4조 (일감 신청 및 제출)</h2>
+  <ul class="list-disc list-inside space-y-2 mb-4">
+    <li>회원은 등록된 본인 계정으로 일감을 신청할 수 있으며, 동일 일감에 대해 중복 신청은 제한될 수 있습니다.</li>
+    <li>회원은 실제 경험에 기반한 사실에 부합하는 리뷰를 작성해야 하며, 허위·과장된 후기 작성을 금지합니다.</li>
+    <li>대가를 받고 작성하는 후기의 경우, 관련 법령(표시·광고의 공정화에 관한 법률 등)에 따라 경제적 대가를 받았다는 사실을 표시해야 합니다.</li>
+    <li>제출된 내역은 운영자의 검수를 거쳐 승인 또는 반려될 수 있습니다.</li>
+  </ul>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">제5조 (포인트 및 리워드)</h2>
+  <p class="mb-4">일감 완료 시 표시되는 포인트(P)는 해당 일감의 예정 리워드를 의미하며, 운영자의 검수 승인 이후 확정됩니다. 정산 방식 및 일정은 별도 공지를 통해 안내하며, 부정한 방법(허위 제출, 어뷰징 등)으로 확인된 경우 리워드 지급이 취소될 수 있습니다.</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">제6조 (금지행위)</h2>
+  <ul class="list-disc list-inside space-y-2 mb-4">
+    <li>타인의 계정을 도용하거나 다수의 허위 계정을 생성하는 행위</li>
+    <li>허위 후기, 비방성 후기 등 관련 법령을 위반하는 콘텐츠 작성</li>
+    <li>사이트의 정상적인 운영을 방해하는 행위</li>
+  </ul>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">제7조 (면책조항)</h2>
+  <p class="mb-4">사이트는 회원 간 또는 회원과 의뢰인 간에 발생하는 분쟁에 대해 직접적인 책임을 지지 않으며, 정보 제공자로서의 역할에 한정합니다. 천재지변, 제3자(크몽, Firebase 등 인프라 제공업체) 서비스 장애 등 사이트가 통제할 수 없는 사유로 인한 손해에 대해서는 책임을 지지 않습니다.</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">제8조 (약관의 변경)</h2>
+  <p class="mb-4">사이트는 필요한 경우 관계 법령을 위반하지 않는 범위에서 이 약관을 개정할 수 있으며, 개정 시 사이트 내 공지를 통해 안내합니다.</p>
+
+  <h2 class="text-lg font-bold text-slate-800 mt-8 mb-3">제9조 (문의)</h2>
+  <p>약관 관련 문의는 <a href="mailto:sss911116@gmail.com" class="text-indigo-600 underline">sss911116@gmail.com</a>으로 연락해 주세요.</p>
+</main>
+
+<footer class="bg-white border-t border-slate-200 py-8 px-4">
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500">
+    <p>&copy; 2026 eungmi blog. All rights reserved.</p>
+    <div class="flex gap-4 flex-wrap">
+      <a href="about.html" class="hover:text-indigo-600">소개</a>
+      <a href="guides/index.html" class="hover:text-indigo-600">부업 가이드</a>
+      <a href="contact.html" class="hover:text-indigo-600">문의</a>
+      <a href="privacy.html" class="hover:text-indigo-600">개인정보처리방침</a>
+      <a href="terms.html" class="hover:text-indigo-600">이용약관</a>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { watchAuthState, wireLogoutButton } from "./js/auth.js";
+  watchAuthState(() => {});
+  wireLogoutButton();
+  document.getElementById("navMenuBtn")?.addEventListener("click", () => {
+    const menu = document.getElementById("navMobileMenu");
+    if (!menu) return;
+    menu.classList.toggle("hidden");
+    document.getElementById("navMenuBtn").textContent = menu.classList.contains("hidden") ? "☰" : "✕";
+  });
+</script>
+</body>
+</html>
