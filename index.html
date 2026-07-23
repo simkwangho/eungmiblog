@@ -206,6 +206,63 @@
   </div>
 </div>
 
+<div id="adminDashboardModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 relative max-h-[90vh] flex flex-col">
+    <button data-close-modal="adminDashboardModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <div class="border-b border-slate-100 pb-4 mb-4">
+      <h3 class="text-xl font-bold text-slate-800">👤 관리자페이지</h3>
+      <p id="adminDashboardAdminInfo" class="text-xs text-slate-500 mt-1"></p>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-xs font-bold text-slate-600 mb-1">리뷰어 선택</label>
+      <select id="adminDashboardReviewerSelect" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none"></select>
+    </div>
+
+    <div class="overflow-y-auto flex-1 space-y-4 pr-1">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-4">
+          <div class="text-xs text-indigo-200">⏳ 정산 대기 포인트</div>
+          <div id="dashPendingPoints" class="text-2xl font-extrabold mt-1">0 P</div>
+        </div>
+        <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-4">
+          <div class="text-xs text-indigo-200">✅ 누적 정산 완료 포인트</div>
+          <div id="dashSettledPoints" class="text-2xl font-extrabold mt-1">0 P</div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 border-b border-slate-100">
+        <button data-dash-tab="apps" class="dash-tab-btn px-3 py-2 text-sm font-bold border-b-2 border-indigo-600 text-indigo-600">📋 일감 &amp; 정산 내역</button>
+        <button data-dash-tab="accounts" class="dash-tab-btn px-3 py-2 text-sm font-bold border-b-2 border-transparent text-slate-500">📱 플랫폼 계정/링크 관리</button>
+      </div>
+
+      <div id="dashAppsPane">
+        <p class="text-[11px] text-slate-400 mb-2">최근 제출된 내역 순으로 표시됩니다.</p>
+        <div class="overflow-x-auto border border-slate-100 rounded-xl">
+          <table class="w-full text-left text-xs min-w-[480px]">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+              <tr>
+                <th class="p-3">일감정보</th>
+                <th class="p-3">사용 계정</th>
+                <th class="p-3">리워드</th>
+                <th class="p-3">진행 상태</th>
+                <th class="p-3">제출 URL</th>
+              </tr>
+            </thead>
+            <tbody id="dashAppsTable" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="dashAccountsPane" class="hidden">
+        <p class="text-[11px] text-slate-400 mb-2">등록된 계정과 승인 상태를 확인할 수 있습니다.</p>
+        <div id="dashAccountSummary" class="flex flex-wrap gap-1.5 mb-3"></div>
+        <div id="dashAccountList" class="space-y-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="applyModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
   <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 relative">
     <button data-close-modal="applyModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
@@ -460,6 +517,9 @@
 
   wireTabs(".account-tab-btn", "accountTab", { approval: "accountApprovalPane", members: "memberManagePane" });
   wireTabs(".settlement-tab-btn", "settlementTab", { review: "reviewPane", settlement: "settlementPane" });
+  wireTabs(".dash-tab-btn", "dashTab", { apps: "dashAppsPane", accounts: "dashAccountsPane" });
+
+  document.getElementById("adminDashboardReviewerSelect").addEventListener("change", () => app.switchAdminDashboardReviewer());
 </script>
 </body>
 </html>

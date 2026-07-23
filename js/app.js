@@ -213,8 +213,12 @@ function statusBadgeHTML(status) {
 export async function openMyPage() {
   if (!currentUser) return;
 
+  if (currentRole === "admin") {
+    return openAdminDashboard();
+  }
+
   document.getElementById("myPageUserInfo").innerText =
-    `계정: ${currentUser.email} | 회원 유형: ${currentRole === "admin" ? "관리자" : "일반 리뷰어"}`;
+    `계정: ${currentUser.email} | 회원 유형: 일반 리뷰어`;
 
   const accContainer = document.getElementById("subAccountList");
   accContainer.innerHTML = "";
@@ -313,6 +317,124 @@ export async function deleteSubAccount(subId) {
   if (!confirm("이 계정을 삭제하시겠습니까?")) return;
   await deleteDoc(doc(db, "subAccounts", subId));
   openMyPage();
+}
+
+// ---------- 관리자페이지 (리뷰어별 정산 현황 대시보드) ----------
+function accountIcon(name) {
+  if (name.includes("영수증")) return "🧾";
+  if (name.includes("당근")) return "🥕";
+  if (name.includes("카카오맵")) return "📍";
+  if (name.includes("블로그")) return "✍️";
+  return "📱";
+}
+
+export async function openAdminDashboard() {
+  if (currentRole !== "admin") return;
+
+  document.getElementById("adminDashboardAdminInfo").innerText =
+    `총괄관리자: ${currentUser.displayName || currentUser.email} (${currentUser.email})`;
+
+  await Promise.all([fetchAllUsers(), fetchAllApplications(), fetchAllSubAccounts()]);
+
+  const reviewers = allUsersCache.filter((u) => u.role !== "admin");
+  const select = document.getElementById("adminDashboardReviewerSelect");
+  select.innerHTML = "";
+
+  if (!reviewers.length) {
+    select.insertAdjacentHTML("beforeend", `<option value="">등록된 리뷰어가 없습니다</option>`);
+  } else {
+    reviewers.forEach((u) => {
+      const label = `${u.name || u.email}${u.nickname ? ` (${u.nickname})` : ""}`;
+      select.insertAdjacentHTML("beforeend", `<option value="${u.id}">${label}</option>`);
+    });
+  }
+
+  renderAdminDashboardFor(reviewers[0]?.id || "");
+  openModal("adminDashboardModal");
+}
+
+export function switchAdminDashboardReviewer() {
+  const uid = document.getElementById("adminDashboardReviewerSelect").value;
+  renderAdminDashboardFor(uid);
+}
+
+function renderAdminDashboardFor(uid) {
+  const apps = allAppsCache.filter((a) => a.userId === uid);
+
+  const pendingPoints = apps
+    .filter((a) => a.status === "정산예정")
+    .reduce((sum, a) => sum + (jobsCache.find((j) => j.id === a.jobId)?.reward || 0), 0);
+  const settledPoints = apps
+    .filter((a) => a.status === "정산완료")
+    .reduce((sum, a) => sum + (jobsCache.find((j) => j.id === a.jobId)?.reward || 0), 0);
+
+  document.getElementById("dashPendingPoints").textContent = `${pendingPoints.toLocaleString()} P`;
+  document.getElementById("dashSettledPoints").textContent = `${settledPoints.toLocaleString()} P`;
+
+  const tbody = document.getElementById("dashAppsTable");
+  tbody.innerHTML = "";
+  const sortedApps = apps
+    .slice()
+    .sort((a, b) => (b.submittedAt || b.createdAt || 0) - (a.submittedAt || a.createdAt || 0));
+
+  if (!sortedApps.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">신청 내역이 없습니다.</td></tr>`;
+  } else {
+    sortedApps.forEach((app) => {
+      const job = jobsCache.find((j) => j.id === app.jobId);
+      tbody.insertAdjacentHTML(
+        "beforeend",
+        `<tr>
+          <td class="p-3 font-semibold text-slate-800">${job ? job.title : "일감"}</td>
+          <td class="p-3 font-medium text-slate-600">${app.subAccount}</td>
+          <td class="p-3 font-bold text-indigo-600">${job ? Number(job.reward).toLocaleString() : 0} P</td>
+          <td class="p-3">${statusBadgeHTML(app.status)}</td>
+          <td class="p-3">${app.url ? `<a href="${app.url}" target="_blank" rel="noopener" class="text-indigo-600 underline">링크확인</a>` : "-"}</td>
+        </tr>`
+      );
+    });
+  }
+
+  const accounts = allSubAccountsCache.filter((a) => a.userId === uid);
+
+  const summaryContainer = document.getElementById("dashAccountSummary");
+  summaryContainer.innerHTML = "";
+  const nameGroups = {};
+  accounts.forEach((acc) => {
+    nameGroups[acc.name] = nameGroups[acc.name] || { approved: 0 };
+    if (acc.status === "승인됨") nameGroups[acc.name].approved += 1;
+  });
+  Object.entries(nameGroups).forEach(([name, counts]) => {
+    summaryContainer.insertAdjacentHTML(
+      "beforeend",
+      `<span class="bg-slate-100 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg">${accountIcon(name)} ${name}: 승인 ${counts.approved}개</span>`
+    );
+  });
+
+  const listContainer = document.getElementById("dashAccountList");
+  listContainer.innerHTML = "";
+  if (!accounts.length) {
+    listContainer.innerHTML = `<p class="text-xs text-slate-400">등록된 계정이 없습니다.</p>`;
+  } else {
+    accounts.forEach((acc) => {
+      let statusBadge = "";
+      if (acc.status === "대기") statusBadge = `<span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-1 rounded">대기중</span>`;
+      else if (acc.status === "승인됨") statusBadge = `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-1 rounded">승인완료</span>`;
+      else if (acc.status === "거절됨") statusBadge = `<span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">거절됨</span>`;
+
+      listContainer.insertAdjacentHTML(
+        "beforeend",
+        `<div class="bg-white border border-slate-200 rounded-xl p-3">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="font-bold text-slate-800 text-sm">${accountIcon(acc.name)} ${acc.name}</span>
+            ${statusBadge}
+          </div>
+          <a href="${acc.link}" target="_blank" rel="noopener" class="text-indigo-600 underline text-xs break-all">${acc.link}</a>
+          ${acc.status === "거절됨" && acc.rejectReason ? `<div class="text-[11px] text-rose-500 mt-1">사유: ${acc.rejectReason}</div>` : ""}
+        </div>`
+      );
+    });
+  }
 }
 
 // ---------- 제출(URL) ----------
