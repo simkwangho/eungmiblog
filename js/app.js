@@ -409,11 +409,13 @@ export async function deleteJob(jobId) {
 export async function onSignupSubmit(e) {
   e.preventDefault();
   const name = document.getElementById("signupName").value;
+  const nickname = document.getElementById("signupNickname").value;
+  const phone = document.getElementById("signupPhone").value;
   const email = document.getElementById("signupEmail").value;
   const pw = document.getElementById("signupPw").value;
 
   try {
-    await handleSignup(name, email, pw);
+    await handleSignup(name, nickname, phone, email, pw);
     alert("회원가입이 완료되었습니다! 자동으로 로그인됩니다.");
     closeModal("signupModal");
     e.target.reset();

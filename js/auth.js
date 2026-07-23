@@ -48,11 +48,13 @@ export function watchAuthState(onChange) {
   });
 }
 
-export async function handleSignup(name, email, pw) {
+export async function handleSignup(name, nickname, phone, email, pw) {
   const cred = await createUserWithEmailAndPassword(auth, email, pw);
-  await updateProfile(cred.user, { displayName: name });
+  await updateProfile(cred.user, { displayName: nickname });
   await setDoc(doc(db, "users", cred.user.uid), {
     name,
+    nickname,
+    phone,
     email,
     role: "user",
     subAccounts: ["기본 계정"],
