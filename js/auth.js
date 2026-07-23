@@ -27,12 +27,20 @@ export function watchAuthState(onChange) {
     let role = "user";
 
     if (user) {
+      const snap = await getDoc(doc(db, "users", user.uid));
+      const data = snap.exists() ? snap.data() : {};
+
+      if (data.withdrawn) {
+        await signOut(auth);
+        alert("탈퇴 처리된 계정입니다. 문의사항은 문의 페이지로 연락해 주세요.");
+        return;
+      }
+
       if (loggedOut) loggedOut.classList.add("hidden");
       if (loggedIn) loggedIn.classList.remove("hidden");
       if (navUserName) navUserName.textContent = user.displayName || user.email;
 
-      const snap = await getDoc(doc(db, "users", user.uid));
-      role = snap.exists() ? snap.data().role || "user" : "user";
+      role = data.role || "user";
 
       if (adminMenu) {
         if (role === "admin") adminMenu.classList.remove("hidden");

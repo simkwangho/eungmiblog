@@ -16,11 +16,15 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // 사용자 프로필: 본인 또는 관리자만 조회/수정 가능. role 필드는 본인이 임의로 바꿀 수 없음(관리자만 변경 가능).
+    // 사용자 프로필: 본인 또는 관리자만 조회/수정 가능.
+    // role, withdrawn 필드는 본인이 임의로 바꿀 수 없음(관리자만 변경 가능) — 탈퇴 처리 우회 방지.
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
       allow create: if isOwner(uid) && request.resource.data.role == 'user';
-      allow update: if (isOwner(uid) && request.resource.data.role == resource.data.role) || isAdmin();
+      allow update: if (isOwner(uid)
+          && request.resource.data.role == resource.data.role
+          && request.resource.data.get('withdrawn', false) == resource.data.get('withdrawn', false))
+        || isAdmin();
       allow delete: if isAdmin();
     }
 

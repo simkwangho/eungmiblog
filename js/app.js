@@ -373,6 +373,24 @@ export async function openAdminUsersManager() {
     allUsersCache.forEach((u) => {
       const appCount = allAppsCache.filter((a) => a.userId === u.id).length;
       const subCount = (u.subAccounts || []).length;
+      const isAdminUser = u.role === "admin";
+      const isWithdrawn = !!u.withdrawn;
+
+      let typeBadge = isAdminUser
+        ? `<span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-1 rounded">관리자</span>`
+        : `<span class="bg-slate-100 text-slate-600 text-[11px] font-bold px-2 py-1 rounded">일반회원</span>`;
+      if (isWithdrawn) {
+        typeBadge += ` <span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">탈퇴됨</span>`;
+      }
+
+      const withdrawBtn = isAdminUser
+        ? ""
+        : `<button data-uid="${u.id}" class="withdraw-user-btn ${
+            isWithdrawn ? "bg-emerald-600 hover:bg-emerald-700" : "bg-rose-500 hover:bg-rose-600"
+          } text-white px-2 py-1 rounded text-[11px] font-bold whitespace-nowrap">${
+            isWithdrawn ? "복구" : "탈퇴 처리"
+          }</button>`;
+
       tbody.insertAdjacentHTML(
         "beforeend",
         `<tr>
@@ -381,9 +399,10 @@ export async function openAdminUsersManager() {
           <td class="p-2.5 text-slate-600">${u.phone || "-"}</td>
           <td class="p-2.5 text-slate-600">${subCount}개</td>
           <td class="p-2.5 text-slate-600">${appCount}건</td>
-          <td class="p-2.5">${u.role === "admin" ? `<span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-1 rounded">관리자</span>` : `<span class="bg-slate-100 text-slate-600 text-[11px] font-bold px-2 py-1 rounded">일반회원</span>`}</td>
-          <td class="p-2.5 text-right">
+          <td class="p-2.5 whitespace-nowrap">${typeBadge}</td>
+          <td class="p-2.5 text-right space-x-1 whitespace-nowrap">
             <button data-uid="${u.id}" class="view-user-btn bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded text-[11px] font-bold whitespace-nowrap">마이페이지 보기</button>
+            ${withdrawBtn}
           </td>
         </tr>`
       );
@@ -391,6 +410,9 @@ export async function openAdminUsersManager() {
 
     tbody.querySelectorAll(".view-user-btn").forEach((btn) => {
       btn.addEventListener("click", () => openAdminUserDetail(btn.dataset.uid));
+    });
+    tbody.querySelectorAll(".withdraw-user-btn").forEach((btn) => {
+      btn.addEventListener("click", () => toggleUserWithdrawn(btn.dataset.uid));
     });
   }
 
@@ -452,6 +474,31 @@ export function openAdminUserDetail(uid) {
 
   closeModal("adminUsersModal");
   openModal("adminUserDetailModal");
+}
+
+export async function toggleUserWithdrawn(uid) {
+  if (currentRole !== "admin") return;
+  const u = allUsersCache.find((x) => x.id === uid);
+  if (!u) return;
+
+  if (u.role === "admin") {
+    alert("관리자 계정은 탈퇴 처리할 수 없습니다.");
+    return;
+  }
+
+  const nextWithdrawn = !u.withdrawn;
+  const confirmMsg = nextWithdrawn
+    ? `"${u.name || u.email}" 회원을 탈퇴 처리하시겠습니까? 처리 즉시 로그인이 차단됩니다.`
+    : `"${u.name || u.email}" 회원의 탈퇴 처리를 해제하시겠습니까?`;
+  if (!confirm(confirmMsg)) return;
+
+  await updateDoc(doc(db, "users", uid), {
+    withdrawn: nextWithdrawn,
+    withdrawnAt: nextWithdrawn ? Date.now() : null,
+  });
+
+  alert(nextWithdrawn ? "탈퇴 처리되었습니다." : "탈퇴 처리가 해제되었습니다.");
+  openAdminUsersManager();
 }
 
 // ---------- 관리자: 일감 등록/수정/삭제 ----------
