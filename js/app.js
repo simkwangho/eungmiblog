@@ -373,9 +373,12 @@ function renderAdminDashboardFor(uid) {
 
   const tbody = document.getElementById("dashAppsTable");
   tbody.innerHTML = "";
-  const sortedApps = apps
-    .slice()
-    .sort((a, b) => (b.submittedAt || b.createdAt || 0) - (a.submittedAt || a.createdAt || 0));
+  const appStatusOrder = { 정산예정: 0, 반려됨: 0, 제출완료: 0, 신청완료: 1, 정산완료: 2 };
+  const sortedApps = apps.slice().sort((a, b) => {
+    const orderDiff = (appStatusOrder[a.status] ?? 9) - (appStatusOrder[b.status] ?? 9);
+    if (orderDiff !== 0) return orderDiff;
+    return (b.submittedAt || b.createdAt || 0) - (a.submittedAt || a.createdAt || 0);
+  });
 
   if (!sortedApps.length) {
     tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">신청 내역이 없습니다.</td></tr>`;
@@ -416,18 +419,34 @@ function renderAdminDashboardFor(uid) {
   if (!accounts.length) {
     listContainer.innerHTML = `<p class="text-xs text-slate-400">등록된 계정이 없습니다.</p>`;
   } else {
-    accounts.forEach((acc) => {
+    const statusOrder = { 대기: 0, 거절됨: 1, 승인됨: 2 };
+    const sortedAccounts = accounts.slice().sort((a, b) => {
+      const orderDiff = (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9);
+      if (orderDiff !== 0) return orderDiff;
+      return (a.createdAt || 0) - (b.createdAt || 0);
+    });
+
+    sortedAccounts.forEach((acc) => {
       let statusBadge = "";
       if (acc.status === "대기") statusBadge = `<span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-1 rounded">대기중</span>`;
       else if (acc.status === "승인됨") statusBadge = `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-1 rounded">승인완료</span>`;
       else if (acc.status === "거절됨") statusBadge = `<span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">거절됨</span>`;
 
+      const registeredDate = acc.createdAt
+        ? new Date(acc.createdAt).toLocaleDateString("ko-KR")
+        : "-";
+      const waitingDays =
+        acc.status === "대기" && acc.createdAt
+          ? Math.max(0, Math.floor((Date.now() - acc.createdAt) / 86400000))
+          : null;
+
       listContainer.insertAdjacentHTML(
         "beforeend",
         `<div class="bg-white border border-slate-200 rounded-xl p-3">
-          <div class="flex items-center gap-2 mb-1">
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
             <span class="font-bold text-slate-800 text-sm">${accountIcon(acc.name)} ${acc.name}</span>
             ${statusBadge}
+            <span class="text-[11px] text-slate-400">등록일: ${registeredDate}${waitingDays !== null ? ` · ${waitingDays}일째 대기중` : ""}</span>
           </div>
           <a href="${acc.link}" target="_blank" rel="noopener" class="text-indigo-600 underline text-xs break-all">${acc.link}</a>
           ${acc.status === "거절됨" && acc.rejectReason ? `<div class="text-[11px] text-rose-500 mt-1">사유: ${acc.rejectReason}</div>` : ""}
