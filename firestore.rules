@@ -35,13 +35,26 @@ service cloud.firestore {
     }
 
     // 신청/제출 내역: 본인 또는 관리자만 조회 가능.
-    // 생성은 본인 명의로만, 상태 변경은 '신청완료' 상태에서 본인이 제출할 때만 허용하고 그 외에는 관리자만 변경 가능.
+    // 생성은 본인 명의로만, 상태 변경은 '신청완료'(최초 제출) 또는 '반려됨'(재제출) 상태에서
+    // 본인이 제출/재제출할 때만 허용하고 그 외 상태 전환(승인/거절/정산완료)은 관리자만 가능.
     match /applications/{appId} {
       allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
       allow update: if isAdmin() ||
-        (isSignedIn() && resource.data.userId == request.auth.uid && resource.data.status == '신청완료');
+        (isSignedIn() && resource.data.userId == request.auth.uid &&
+          (resource.data.status == '신청완료' || resource.data.status == '반려됨'));
       allow delete: if isAdmin();
+    }
+
+    // 리뷰어 보유 계정(플랫폼 링크): 본인 또는 관리자만 조회 가능.
+    // 생성은 본인 명의 + 반드시 '대기' 상태로만 가능(스스로 승인 불가). 승인/거절(상태·거절사유 변경)은 관리자만.
+    // 삭제는 본인(원하면 계정 정리) 또는 관리자 모두 가능.
+    match /subAccounts/{subId} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == '대기';
+      allow update: if isAdmin();
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
     }
   }
 }

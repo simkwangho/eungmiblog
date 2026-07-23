@@ -7,14 +7,12 @@ import {
   collection,
   addDoc,
   doc,
-  getDoc,
   updateDoc,
   deleteDoc,
   onSnapshot,
   query,
   where,
   orderBy,
-  arrayUnion,
   getDocs,
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { handleSignup, handleLogin, handleLogout } from "./auth.js";
@@ -24,23 +22,38 @@ let currentRole = "user";
 let jobsCache = [];
 let userAppsCache = [];
 let userAppsUnsub = null;
+let userSubAccountsCache = [];
+let userSubAccountsUnsub = null;
 
 // ---------- 인증 상태 반영 ----------
 export function setCurrentUser(user, role) {
   currentUser = user;
   currentRole = role;
 
+  const myPageLabel = document.getElementById("navMyPageLabel");
+  if (myPageLabel) myPageLabel.textContent = role === "admin" ? "관리자페이지" : "마이페이지";
+
   if (userAppsUnsub) {
     userAppsUnsub();
     userAppsUnsub = null;
   }
+  if (userSubAccountsUnsub) {
+    userSubAccountsUnsub();
+    userSubAccountsUnsub = null;
+  }
   userAppsCache = [];
+  userSubAccountsCache = [];
 
   if (user) {
-    const q = query(collection(db, "applications"), where("userId", "==", user.uid));
-    userAppsUnsub = onSnapshot(q, (snap) => {
+    const appsQ = query(collection(db, "applications"), where("userId", "==", user.uid));
+    userAppsUnsub = onSnapshot(appsQ, (snap) => {
       userAppsCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       renderJobs(jobsCache);
+    });
+
+    const subsQ = query(collection(db, "subAccounts"), where("userId", "==", user.uid));
+    userSubAccountsUnsub = onSnapshot(subsQ, (snap) => {
+      userSubAccountsCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     });
   }
   renderJobs(jobsCache);
@@ -139,21 +152,23 @@ export async function openApplyModal(jobId) {
   document.getElementById("applyJobId").value = jobId;
   document.getElementById("applyJobTitle").innerText = `[${job.category}] ${job.title}`;
 
-  const userSnap = await getDoc(doc(db, "users", currentUser.uid));
-  const subAccounts = userSnap.exists() ? userSnap.data().subAccounts || [] : [];
+  const approvedAccounts = userSubAccountsCache.filter((a) => a.status === "승인됨");
 
   const select = document.getElementById("applyAccountSelect");
   select.innerHTML = "";
 
-  if (!subAccounts.length) {
-    select.insertAdjacentHTML("beforeend", `<option value="">등록된 계정이 없습니다</option>`);
+  if (!approvedAccounts.length) {
+    select.insertAdjacentHTML(
+      "beforeend",
+      `<option value="">승인된 계정이 없습니다 (마이페이지에서 계정 등록 후 승인 대기)</option>`
+    );
   }
 
-  subAccounts.forEach((acc) => {
-    const already = userAppsCache.find((a) => a.jobId === jobId && a.subAccount === acc);
+  approvedAccounts.forEach((acc) => {
+    const already = userAppsCache.find((a) => a.jobId === jobId && a.subAccount === acc.name);
     const disabledStr = already ? "disabled" : "";
-    const labelStr = already ? `${acc} (이미 신청됨)` : acc;
-    select.insertAdjacentHTML("beforeend", `<option value="${acc}" ${disabledStr}>${labelStr}</option>`);
+    const labelStr = already ? `${acc.name} (이미 신청됨)` : acc.name;
+    select.insertAdjacentHTML("beforeend", `<option value="${acc.name}" ${disabledStr}>${labelStr}</option>`);
   });
 
   openModal("applyModal");
@@ -184,6 +199,16 @@ export async function handleJobApplySubmit(e) {
   e.target.reset();
 }
 
+// ---------- 상태 배지 공통 ----------
+function statusBadgeHTML(status) {
+  if (status === "신청완료") return `<span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2 py-1 rounded">신청완료</span>`;
+  if (status === "제출완료") return `<span class="bg-blue-100 text-blue-700 text-[11px] font-bold px-2 py-1 rounded">📤 검수중</span>`;
+  if (status === "정산예정") return `<span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-1 rounded">💰 정산예정</span>`;
+  if (status === "정산완료") return `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-1 rounded">✅ 정산완료</span>`;
+  if (status === "반려됨") return `<span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">반려됨</span>`;
+  return "";
+}
+
 // ---------- 마이페이지 ----------
 export async function openMyPage() {
   if (!currentUser) return;
@@ -191,16 +216,31 @@ export async function openMyPage() {
   document.getElementById("myPageUserInfo").innerText =
     `계정: ${currentUser.email} | 회원 유형: ${currentRole === "admin" ? "관리자" : "일반 리뷰어"}`;
 
-  const userSnap = await getDoc(doc(db, "users", currentUser.uid));
-  const subAccounts = userSnap.exists() ? userSnap.data().subAccounts || [] : [];
-
   const accContainer = document.getElementById("subAccountList");
   accContainer.innerHTML = "";
-  subAccounts.forEach((acc) => {
-    accContainer.insertAdjacentHTML(
-      "beforeend",
-      `<span class="bg-white border border-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-sm">👤 ${acc}</span>`
-    );
+
+  if (!userSubAccountsCache.length) {
+    accContainer.innerHTML = `<span class="text-xs text-slate-400">등록된 계정이 없습니다. 아래에서 추가해 보세요.</span>`;
+  } else {
+    userSubAccountsCache.forEach((acc) => {
+      let statusTag = "";
+      if (acc.status === "대기") statusTag = `<span class="text-amber-600">(승인 대기)</span>`;
+      else if (acc.status === "승인됨") statusTag = `<span class="text-emerald-600">(승인됨)</span>`;
+      else if (acc.status === "거절됨") statusTag = `<span class="text-rose-600">(거절됨)</span>`;
+
+      accContainer.insertAdjacentHTML(
+        "beforeend",
+        `<span class="bg-white border border-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-sm inline-flex items-center gap-1">
+          👤 ${acc.name} ${statusTag}
+          <button data-sub-id="${acc.id}" class="del-sub-btn text-slate-400 hover:text-rose-600 font-bold ml-1">✕</button>
+        </span>
+        ${acc.status === "거절됨" && acc.rejectReason ? `<div class="w-full text-[11px] text-rose-500 mt-0.5">사유: ${acc.rejectReason}</div>` : ""}`
+      );
+    });
+  }
+
+  accContainer.querySelectorAll(".del-sub-btn").forEach((btn) => {
+    btn.addEventListener("click", () => deleteSubAccount(btn.dataset.subId));
   });
 
   const tbody = document.getElementById("myApplicationsTable");
@@ -211,18 +251,18 @@ export async function openMyPage() {
   } else {
     userAppsCache.forEach((app) => {
       const job = jobsCache.find((j) => j.id === app.jobId);
-
-      let statusBadge = "";
-      if (app.status === "신청완료") statusBadge = `<span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2 py-1 rounded">신청완료</span>`;
-      else if (app.status === "제출완료") statusBadge = `<span class="bg-blue-100 text-blue-700 text-[11px] font-bold px-2 py-1 rounded">📤 제출완료</span>`;
-      else if (app.status === "승인완료") statusBadge = `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-1 rounded">✅ 승인완료</span>`;
-      else if (app.status === "반려됨") statusBadge = `<span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">반려됨</span>`;
+      const rejectNote =
+        app.status === "반려됨" && app.rejectReason
+          ? `<div class="text-[11px] text-rose-500 mt-1">사유: ${app.rejectReason}</div>`
+          : "";
 
       let actionBtn = "";
       if (app.status === "신청완료") {
         actionBtn = `<button data-app-id="${app.id}" class="submit-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-1 rounded text-xs transition">제출하기</button>`;
+      } else if (app.status === "반려됨") {
+        actionBtn = `<button data-app-id="${app.id}" class="submit-btn bg-rose-600 hover:bg-rose-700 text-white font-bold px-3 py-1 rounded text-xs transition">재제출</button>`;
       } else {
-        actionBtn = `<span class="text-slate-400 text-[11px]">제출 완료됨</span>`;
+        actionBtn = `<span class="text-slate-400 text-[11px]">-</span>`;
       }
 
       tbody.insertAdjacentHTML(
@@ -231,7 +271,7 @@ export async function openMyPage() {
           <td class="p-3 font-semibold text-slate-800">${job ? job.title : "일감"}</td>
           <td class="p-3 font-medium text-slate-600">${app.subAccount}</td>
           <td class="p-3 font-bold text-indigo-600">${job ? Number(job.reward).toLocaleString() : 0} P</td>
-          <td class="p-3">${statusBadge}</td>
+          <td class="p-3">${statusBadgeHTML(app.status)}${rejectNote}</td>
           <td class="p-3 text-right">${actionBtn}</td>
         </tr>`
       );
@@ -247,21 +287,31 @@ export async function openMyPage() {
 
 export async function addSubAccount(e) {
   e.preventDefault();
-  const input = document.getElementById("subAccName");
-  const accName = input.value.trim();
-  if (!accName) return;
+  const nameInput = document.getElementById("subAccName");
+  const linkInput = document.getElementById("subAccLink");
+  const name = nameInput.value.trim();
+  const link = linkInput.value.trim();
+  if (!name || !link) return;
 
-  const userRef = doc(db, "users", currentUser.uid);
-  const userSnap = await getDoc(userRef);
-  const existing = userSnap.exists() ? userSnap.data().subAccounts || [] : [];
+  await addDoc(collection(db, "subAccounts"), {
+    userId: currentUser.uid,
+    userName: currentUser.displayName || currentUser.email,
+    name,
+    link,
+    status: "대기",
+    rejectReason: "",
+    createdAt: Date.now(),
+  });
 
-  if (existing.includes(accName)) {
-    alert("이미 등록된 계정 이름입니다.");
-    return;
-  }
+  nameInput.value = "";
+  linkInput.value = "";
+  alert("계정이 등록되었습니다. 관리자 승인 후 일감 신청에 사용할 수 있습니다.");
+  openMyPage();
+}
 
-  await updateDoc(userRef, { subAccounts: arrayUnion(accName) });
-  input.value = "";
+export async function deleteSubAccount(subId) {
+  if (!confirm("이 계정을 삭제하시겠습니까?")) return;
+  await deleteDoc(doc(db, "subAccounts", subId));
   openMyPage();
 }
 
@@ -285,138 +335,172 @@ export async function handleJobSubmission(e) {
   await updateDoc(doc(db, "applications", appId), {
     status: "제출완료",
     url,
+    rejectReason: "",
     submittedAt: Date.now(),
   });
 
-  alert("제출이 완료되었습니다. 관리자 검수 후 승인 처리됩니다.");
+  alert("제출이 완료되었습니다. 관리자 검수 후 정산예정으로 전환됩니다.");
   closeModal("submitModal");
   e.target.reset();
 }
 
-// ---------- 관리자: 제출 관리 ----------
-export async function openAdminSubmitManager() {
-  if (currentRole !== "admin") {
-    alert("관리자 전용 기능입니다.");
-    return;
-  }
-
-  const snap = await getDocs(collection(db, "applications"));
-  const submittedApps = snap.docs
-    .map((d) => ({ id: d.id, ...d.data() }))
-    .filter((a) => a.status !== "신청완료")
-    .sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
-
-  const tbody = document.getElementById("adminSubmitTable");
-  tbody.innerHTML = "";
-
-  if (!submittedApps.length) {
-    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">제출된 내역이 없습니다.</td></tr>`;
-  } else {
-    submittedApps.forEach((app) => {
-      const job = jobsCache.find((j) => j.id === app.jobId);
-      tbody.insertAdjacentHTML(
-        "beforeend",
-        `<tr>
-          <td class="p-2.5 font-bold text-slate-700">${app.userName || app.userId}<br><span class="text-[10px] text-indigo-600">(${app.subAccount})</span></td>
-          <td class="p-2.5 text-slate-700">${job ? job.title : "일감"}</td>
-          <td class="p-2.5">
-            ${app.url ? `<a href="${app.url}" target="_blank" rel="noopener" class="text-indigo-600 underline">링크확인</a>` : ""}
-          </td>
-          <td class="p-2.5 font-bold text-slate-800">${app.status}</td>
-          <td class="p-2.5 text-right space-x-1">
-            <button data-app-id="${app.id}" data-status="승인완료" class="status-btn bg-emerald-600 text-white px-2 py-1 rounded text-[10px] font-bold">승인</button>
-            <button data-app-id="${app.id}" data-status="반려됨" class="status-btn bg-rose-500 text-white px-2 py-1 rounded text-[10px] font-bold">반려</button>
-          </td>
-        </tr>`
-      );
-    });
-
-    tbody.querySelectorAll(".status-btn").forEach((btn) => {
-      btn.addEventListener("click", () => changeStatus(btn.dataset.appId, btn.dataset.status));
-    });
-  }
-
-  openModal("adminSubmitModal");
-}
-
-export async function changeStatus(appId, newStatus) {
-  if (currentRole !== "admin") return;
-  await updateDoc(doc(db, "applications", appId), { status: newStatus });
-  alert(`상태가 [${newStatus}]로 변경되었습니다.`);
-  openAdminSubmitManager();
-}
-
-// ---------- 관리자: 회원 관리 (다른 리뷰어의 마이페이지 열람) ----------
+// ---------- 관리자 데이터 캐시 & 공용 fetch ----------
 let allUsersCache = [];
 let allAppsCache = [];
+let allSubAccountsCache = [];
 
-export async function openAdminUsersManager() {
+async function fetchAllApplications() {
+  const snap = await getDocs(collection(db, "applications"));
+  allAppsCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return allAppsCache;
+}
+
+async function fetchAllUsers() {
+  const snap = await getDocs(collection(db, "users"));
+  allUsersCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return allUsersCache;
+}
+
+async function fetchAllSubAccounts() {
+  const snap = await getDocs(collection(db, "subAccounts"));
+  allSubAccountsCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  return allSubAccountsCache;
+}
+
+// ---------- 관리자: 🛡️ 계정승인 (링크 승인 + 회원 관리) ----------
+export async function openAdminAccountModal() {
   if (currentRole !== "admin") {
     alert("관리자 전용 기능입니다.");
     return;
   }
 
-  const [usersSnap, appsSnap] = await Promise.all([
-    getDocs(collection(db, "users")),
-    getDocs(collection(db, "applications")),
-  ]);
+  await Promise.all([fetchAllSubAccounts(), fetchAllUsers(), fetchAllApplications()]);
+  renderAccountApprovalTab();
+  renderMemberManageTab();
+  openModal("adminAccountModal");
+}
 
-  allUsersCache = usersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
-  allAppsCache = appsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+function renderAccountApprovalTab() {
+  const tbody = document.getElementById("accountApprovalTable");
+  tbody.innerHTML = "";
 
+  if (!allSubAccountsCache.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">등록된 계정이 없습니다.</td></tr>`;
+    return;
+  }
+
+  const sorted = allSubAccountsCache.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+  sorted.forEach((sa) => {
+    let statusBadge = "";
+    if (sa.status === "대기") statusBadge = `<span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-1 rounded">대기중</span>`;
+    else if (sa.status === "승인됨") statusBadge = `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-1 rounded">✅ 승인됨</span>`;
+    else if (sa.status === "거절됨") statusBadge = `<span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">거절됨</span>`;
+
+    const rejectNote =
+      sa.status === "거절됨" && sa.rejectReason
+        ? `<div class="text-[11px] text-rose-500 mt-1">사유: ${sa.rejectReason}</div>`
+        : "";
+
+    const actionBtns =
+      sa.status === "대기"
+        ? `<button data-sub-id="${sa.id}" data-decision="승인됨" class="account-decision-btn bg-emerald-600 text-white px-2 py-1 rounded text-[10px] font-bold">승인</button>
+           <button data-sub-id="${sa.id}" data-decision="거절됨" class="account-decision-btn bg-rose-500 text-white px-2 py-1 rounded text-[10px] font-bold">거절</button>`
+        : `<span class="text-slate-400 text-[11px]">처리완료</span>`;
+
+    tbody.insertAdjacentHTML(
+      "beforeend",
+      `<tr>
+        <td class="p-2.5 font-semibold text-slate-800">${sa.userName || sa.userId}</td>
+        <td class="p-2.5 text-slate-600">${sa.name}</td>
+        <td class="p-2.5"><a href="${sa.link}" target="_blank" rel="noopener" class="text-indigo-600 underline break-all">${sa.link}</a></td>
+        <td class="p-2.5 whitespace-nowrap">${statusBadge}${rejectNote}</td>
+        <td class="p-2.5 text-right whitespace-nowrap space-x-1">${actionBtns}</td>
+      </tr>`
+    );
+  });
+
+  tbody.querySelectorAll(".account-decision-btn").forEach((btn) => {
+    btn.addEventListener("click", () => decideSubAccount(btn.dataset.subId, btn.dataset.decision));
+  });
+}
+
+export async function decideSubAccount(subId, decision) {
+  if (currentRole !== "admin") return;
+
+  let rejectReason = "";
+  if (decision === "거절됨") {
+    rejectReason = (prompt("거절 사유를 입력해 주세요.") || "").trim();
+    if (!rejectReason) {
+      alert("거절 사유를 입력해야 거절 처리할 수 있습니다.");
+      return;
+    }
+  }
+
+  await updateDoc(doc(db, "subAccounts", subId), {
+    status: decision,
+    rejectReason,
+    reviewedAt: Date.now(),
+  });
+
+  alert(decision === "승인됨" ? "계정이 승인되었습니다." : "계정이 거절 처리되었습니다.");
+  await fetchAllSubAccounts();
+  renderAccountApprovalTab();
+}
+
+function renderMemberManageTab() {
   const tbody = document.getElementById("adminUsersTable");
   tbody.innerHTML = "";
 
   if (!allUsersCache.length) {
     tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">등록된 회원이 없습니다.</td></tr>`;
-  } else {
-    allUsersCache.forEach((u) => {
-      const appCount = allAppsCache.filter((a) => a.userId === u.id).length;
-      const subCount = (u.subAccounts || []).length;
-      const isAdminUser = u.role === "admin";
-      const isWithdrawn = !!u.withdrawn;
-
-      let typeBadge = isAdminUser
-        ? `<span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-1 rounded">관리자</span>`
-        : `<span class="bg-slate-100 text-slate-600 text-[11px] font-bold px-2 py-1 rounded">일반회원</span>`;
-      if (isWithdrawn) {
-        typeBadge += ` <span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">탈퇴됨</span>`;
-      }
-
-      const withdrawBtn = isAdminUser
-        ? ""
-        : `<button data-uid="${u.id}" class="withdraw-user-btn ${
-            isWithdrawn ? "bg-emerald-600 hover:bg-emerald-700" : "bg-rose-500 hover:bg-rose-600"
-          } text-white px-2 py-1 rounded text-[11px] font-bold whitespace-nowrap">${
-            isWithdrawn ? "복구" : "탈퇴 처리"
-          }</button>`;
-
-      tbody.insertAdjacentHTML(
-        "beforeend",
-        `<tr>
-          <td class="p-2.5 font-semibold text-slate-800">${u.name || "-"} ${u.nickname ? `<span class="text-slate-400 font-normal">(${u.nickname})</span>` : ""}</td>
-          <td class="p-2.5 text-slate-600">${u.email || "-"}</td>
-          <td class="p-2.5 text-slate-600">${u.phone || "-"}</td>
-          <td class="p-2.5 text-slate-600">${subCount}개</td>
-          <td class="p-2.5 text-slate-600">${appCount}건</td>
-          <td class="p-2.5 whitespace-nowrap">${typeBadge}</td>
-          <td class="p-2.5 text-right space-x-1 whitespace-nowrap">
-            <button data-uid="${u.id}" class="view-user-btn bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded text-[11px] font-bold whitespace-nowrap">마이페이지 보기</button>
-            ${withdrawBtn}
-          </td>
-        </tr>`
-      );
-    });
-
-    tbody.querySelectorAll(".view-user-btn").forEach((btn) => {
-      btn.addEventListener("click", () => openAdminUserDetail(btn.dataset.uid));
-    });
-    tbody.querySelectorAll(".withdraw-user-btn").forEach((btn) => {
-      btn.addEventListener("click", () => toggleUserWithdrawn(btn.dataset.uid));
-    });
+    return;
   }
 
-  openModal("adminUsersModal");
+  allUsersCache.forEach((u) => {
+    const appCount = allAppsCache.filter((a) => a.userId === u.id).length;
+    const subCount = allSubAccountsCache.filter((a) => a.userId === u.id).length;
+    const isAdminUser = u.role === "admin";
+    const isWithdrawn = !!u.withdrawn;
+
+    let typeBadge = isAdminUser
+      ? `<span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-1 rounded">관리자</span>`
+      : `<span class="bg-slate-100 text-slate-600 text-[11px] font-bold px-2 py-1 rounded">일반회원</span>`;
+    if (isWithdrawn) {
+      typeBadge += ` <span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">탈퇴됨</span>`;
+    }
+
+    const withdrawBtn = isAdminUser
+      ? ""
+      : `<button data-uid="${u.id}" class="withdraw-user-btn ${
+          isWithdrawn ? "bg-emerald-600 hover:bg-emerald-700" : "bg-rose-500 hover:bg-rose-600"
+        } text-white px-2 py-1 rounded text-[11px] font-bold whitespace-nowrap">${
+          isWithdrawn ? "복구" : "탈퇴 처리"
+        }</button>`;
+
+    tbody.insertAdjacentHTML(
+      "beforeend",
+      `<tr>
+        <td class="p-2.5 font-semibold text-slate-800">${u.name || "-"} ${u.nickname ? `<span class="text-slate-400 font-normal">(${u.nickname})</span>` : ""}</td>
+        <td class="p-2.5 text-slate-600">${u.email || "-"}</td>
+        <td class="p-2.5 text-slate-600">${u.phone || "-"}</td>
+        <td class="p-2.5 text-slate-600">${subCount}개</td>
+        <td class="p-2.5 text-slate-600">${appCount}건</td>
+        <td class="p-2.5 whitespace-nowrap">${typeBadge}</td>
+        <td class="p-2.5 text-right space-x-1 whitespace-nowrap">
+          <button data-uid="${u.id}" class="view-user-btn bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded text-[11px] font-bold whitespace-nowrap">마이페이지 보기</button>
+          ${withdrawBtn}
+        </td>
+      </tr>`
+    );
+  });
+
+  tbody.querySelectorAll(".view-user-btn").forEach((btn) => {
+    btn.addEventListener("click", () => openAdminUserDetail(btn.dataset.uid));
+  });
+  tbody.querySelectorAll(".withdraw-user-btn").forEach((btn) => {
+    btn.addEventListener("click", () => toggleUserWithdrawn(btn.dataset.uid));
+  });
 }
 
 export function openAdminUserDetail(uid) {
@@ -429,14 +513,19 @@ export function openAdminUserDetail(uid) {
 
   const subContainer = document.getElementById("adminUserSubAccountList");
   subContainer.innerHTML = "";
-  const subAccounts = u.subAccounts || [];
+  const subAccounts = allSubAccountsCache.filter((a) => a.userId === uid);
   if (!subAccounts.length) {
     subContainer.innerHTML = `<span class="text-xs text-slate-400">등록된 계정이 없습니다.</span>`;
   } else {
     subAccounts.forEach((acc) => {
+      let statusTag = "";
+      if (acc.status === "대기") statusTag = `<span class="text-amber-600">(승인 대기)</span>`;
+      else if (acc.status === "승인됨") statusTag = `<span class="text-emerald-600">(승인됨)</span>`;
+      else if (acc.status === "거절됨") statusTag = `<span class="text-rose-600">(거절됨)</span>`;
+
       subContainer.insertAdjacentHTML(
         "beforeend",
-        `<span class="bg-white border border-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-sm">👤 ${acc}</span>`
+        `<span class="bg-white border border-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-sm">👤 ${acc.name} ${statusTag}</span>`
       );
     });
   }
@@ -453,26 +542,20 @@ export function openAdminUserDetail(uid) {
     userApps.forEach((app) => {
       const job = jobsCache.find((j) => j.id === app.jobId);
 
-      let statusBadge = "";
-      if (app.status === "신청완료") statusBadge = `<span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2 py-1 rounded">신청완료</span>`;
-      else if (app.status === "제출완료") statusBadge = `<span class="bg-blue-100 text-blue-700 text-[11px] font-bold px-2 py-1 rounded">📤 제출완료</span>`;
-      else if (app.status === "승인완료") statusBadge = `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-1 rounded">✅ 승인완료</span>`;
-      else if (app.status === "반려됨") statusBadge = `<span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">반려됨</span>`;
-
       tbody.insertAdjacentHTML(
         "beforeend",
         `<tr>
           <td class="p-3 font-semibold text-slate-800">${job ? job.title : "일감"}</td>
           <td class="p-3 font-medium text-slate-600">${app.subAccount}</td>
           <td class="p-3 font-bold text-indigo-600">${job ? Number(job.reward).toLocaleString() : 0} P</td>
-          <td class="p-3">${statusBadge}</td>
+          <td class="p-3">${statusBadgeHTML(app.status)}</td>
           <td class="p-3">${app.url ? `<a href="${app.url}" target="_blank" rel="noopener" class="text-indigo-600 underline">링크확인</a>` : "-"}</td>
         </tr>`
       );
     });
   }
 
-  closeModal("adminUsersModal");
+  closeModal("adminAccountModal");
   openModal("adminUserDetailModal");
 }
 
@@ -498,7 +581,129 @@ export async function toggleUserWithdrawn(uid) {
   });
 
   alert(nextWithdrawn ? "탈퇴 처리되었습니다." : "탈퇴 처리가 해제되었습니다.");
-  openAdminUsersManager();
+  await fetchAllUsers();
+  renderMemberManageTab();
+}
+
+// ---------- 관리자: ⚙️ 정산관리 (검수 + 정산) ----------
+export async function openAdminSettlementModal() {
+  if (currentRole !== "admin") {
+    alert("관리자 전용 기능입니다.");
+    return;
+  }
+
+  await fetchAllApplications();
+  renderReviewTab();
+  renderSettlementTab();
+  openModal("adminSettlementModal");
+}
+
+function renderReviewTab() {
+  const tbody = document.getElementById("reviewTable");
+  tbody.innerHTML = "";
+
+  const items = allAppsCache
+    .filter((a) => a.status === "제출완료")
+    .sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
+
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">검수할 제출 내역이 없습니다.</td></tr>`;
+    return;
+  }
+
+  items.forEach((app) => {
+    const job = jobsCache.find((j) => j.id === app.jobId);
+    tbody.insertAdjacentHTML(
+      "beforeend",
+      `<tr>
+        <td class="p-2.5 font-bold text-slate-700">${app.userName || app.userId}<br><span class="text-[10px] text-indigo-600">(${app.subAccount})</span></td>
+        <td class="p-2.5 text-slate-700">${job ? job.title : "일감"}</td>
+        <td class="p-2.5">${app.url ? `<a href="${app.url}" target="_blank" rel="noopener" class="text-indigo-600 underline">링크확인</a>` : ""}</td>
+        <td class="p-2.5 text-right space-x-1 whitespace-nowrap">
+          <button data-app-id="${app.id}" class="review-approve-btn bg-emerald-600 text-white px-2 py-1 rounded text-[10px] font-bold">승인</button>
+          <button data-app-id="${app.id}" class="review-reject-btn bg-rose-500 text-white px-2 py-1 rounded text-[10px] font-bold">거절</button>
+        </td>
+      </tr>`
+    );
+  });
+
+  tbody.querySelectorAll(".review-approve-btn").forEach((btn) => {
+    btn.addEventListener("click", () => reviewSubmission(btn.dataset.appId, true));
+  });
+  tbody.querySelectorAll(".review-reject-btn").forEach((btn) => {
+    btn.addEventListener("click", () => reviewSubmission(btn.dataset.appId, false));
+  });
+}
+
+export async function reviewSubmission(appId, approved) {
+  if (currentRole !== "admin") return;
+
+  let rejectReason = "";
+  if (!approved) {
+    rejectReason = (prompt("거절 사유를 입력해 주세요.") || "").trim();
+    if (!rejectReason) {
+      alert("거절 사유를 입력해야 거절 처리할 수 있습니다.");
+      return;
+    }
+  }
+
+  await updateDoc(doc(db, "applications", appId), {
+    status: approved ? "정산예정" : "반려됨",
+    rejectReason,
+    reviewedAt: Date.now(),
+  });
+
+  alert(approved ? "제출이 승인되어 정산예정 상태로 변경되었습니다." : "제출이 거절 처리되었습니다.");
+  await fetchAllApplications();
+  renderReviewTab();
+  renderSettlementTab();
+}
+
+function renderSettlementTab() {
+  const tbody = document.getElementById("settlementTable");
+  tbody.innerHTML = "";
+
+  const items = allAppsCache
+    .filter((a) => a.status === "정산예정" || a.status === "정산완료")
+    .sort((a, b) => (b.reviewedAt || 0) - (a.reviewedAt || 0));
+
+  if (!items.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">정산 대상 내역이 없습니다.</td></tr>`;
+    return;
+  }
+
+  items.forEach((app) => {
+    const job = jobsCache.find((j) => j.id === app.jobId);
+    const isPending = app.status === "정산예정";
+    const actionBtn = isPending
+      ? `<button data-app-id="${app.id}" class="settle-btn bg-indigo-600 text-white px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap">정산완료 처리</button>`
+      : `<span class="text-slate-400 text-[11px]">처리완료</span>`;
+
+    tbody.insertAdjacentHTML(
+      "beforeend",
+      `<tr>
+        <td class="p-2.5 font-bold text-slate-700">${app.userName || app.userId}<br><span class="text-[10px] text-indigo-600">(${app.subAccount})</span></td>
+        <td class="p-2.5 text-slate-700">${job ? job.title : "일감"}</td>
+        <td class="p-2.5 font-bold text-indigo-600">${job ? Number(job.reward).toLocaleString() : 0} P</td>
+        <td class="p-2.5">${statusBadgeHTML(app.status)}</td>
+        <td class="p-2.5 text-right">${actionBtn}</td>
+      </tr>`
+    );
+  });
+
+  tbody.querySelectorAll(".settle-btn").forEach((btn) => {
+    btn.addEventListener("click", () => markSettled(btn.dataset.appId));
+  });
+}
+
+export async function markSettled(appId) {
+  if (currentRole !== "admin") return;
+  if (!confirm("정산(지급)을 완료 처리하시겠습니까?")) return;
+
+  await updateDoc(doc(db, "applications", appId), { status: "정산완료", settledAt: Date.now() });
+  alert("정산완료 처리되었습니다.");
+  await fetchAllApplications();
+  renderSettlementTab();
 }
 
 // ---------- 관리자: 일감 등록/수정/삭제 ----------

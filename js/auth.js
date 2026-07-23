@@ -65,7 +65,6 @@ export async function handleSignup(name, nickname, phone, email, pw) {
     phone,
     email,
     role: "user",
-    subAccounts: ["기본 계정"],
     createdAt: Date.now(),
   });
   return cred.user;
