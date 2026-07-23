@@ -346,6 +346,114 @@ export async function changeStatus(appId, newStatus) {
   openAdminSubmitManager();
 }
 
+// ---------- 관리자: 회원 관리 (다른 리뷰어의 마이페이지 열람) ----------
+let allUsersCache = [];
+let allAppsCache = [];
+
+export async function openAdminUsersManager() {
+  if (currentRole !== "admin") {
+    alert("관리자 전용 기능입니다.");
+    return;
+  }
+
+  const [usersSnap, appsSnap] = await Promise.all([
+    getDocs(collection(db, "users")),
+    getDocs(collection(db, "applications")),
+  ]);
+
+  allUsersCache = usersSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  allAppsCache = appsSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+
+  const tbody = document.getElementById("adminUsersTable");
+  tbody.innerHTML = "";
+
+  if (!allUsersCache.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">등록된 회원이 없습니다.</td></tr>`;
+  } else {
+    allUsersCache.forEach((u) => {
+      const appCount = allAppsCache.filter((a) => a.userId === u.id).length;
+      const subCount = (u.subAccounts || []).length;
+      tbody.insertAdjacentHTML(
+        "beforeend",
+        `<tr>
+          <td class="p-2.5 font-semibold text-slate-800">${u.name || "-"} ${u.nickname ? `<span class="text-slate-400 font-normal">(${u.nickname})</span>` : ""}</td>
+          <td class="p-2.5 text-slate-600">${u.email || "-"}</td>
+          <td class="p-2.5 text-slate-600">${u.phone || "-"}</td>
+          <td class="p-2.5 text-slate-600">${subCount}개</td>
+          <td class="p-2.5 text-slate-600">${appCount}건</td>
+          <td class="p-2.5">${u.role === "admin" ? `<span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2 py-1 rounded">관리자</span>` : `<span class="bg-slate-100 text-slate-600 text-[11px] font-bold px-2 py-1 rounded">일반회원</span>`}</td>
+          <td class="p-2.5 text-right">
+            <button data-uid="${u.id}" class="view-user-btn bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded text-[11px] font-bold whitespace-nowrap">마이페이지 보기</button>
+          </td>
+        </tr>`
+      );
+    });
+
+    tbody.querySelectorAll(".view-user-btn").forEach((btn) => {
+      btn.addEventListener("click", () => openAdminUserDetail(btn.dataset.uid));
+    });
+  }
+
+  openModal("adminUsersModal");
+}
+
+export function openAdminUserDetail(uid) {
+  if (currentRole !== "admin") return;
+  const u = allUsersCache.find((x) => x.id === uid);
+  if (!u) return;
+
+  document.getElementById("adminUserDetailInfo").innerText =
+    `${u.name || "-"}${u.nickname ? ` (${u.nickname})` : ""} | ${u.email || "-"} | ${u.phone || "-"}`;
+
+  const subContainer = document.getElementById("adminUserSubAccountList");
+  subContainer.innerHTML = "";
+  const subAccounts = u.subAccounts || [];
+  if (!subAccounts.length) {
+    subContainer.innerHTML = `<span class="text-xs text-slate-400">등록된 계정이 없습니다.</span>`;
+  } else {
+    subAccounts.forEach((acc) => {
+      subContainer.insertAdjacentHTML(
+        "beforeend",
+        `<span class="bg-white border border-slate-200 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-sm">👤 ${acc}</span>`
+      );
+    });
+  }
+
+  const userApps = allAppsCache
+    .filter((a) => a.userId === uid)
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  const tbody = document.getElementById("adminUserAppsTable");
+  tbody.innerHTML = "";
+
+  if (!userApps.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">신청 내역이 없습니다.</td></tr>`;
+  } else {
+    userApps.forEach((app) => {
+      const job = jobsCache.find((j) => j.id === app.jobId);
+
+      let statusBadge = "";
+      if (app.status === "신청완료") statusBadge = `<span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2 py-1 rounded">신청완료</span>`;
+      else if (app.status === "제출완료") statusBadge = `<span class="bg-blue-100 text-blue-700 text-[11px] font-bold px-2 py-1 rounded">📤 제출완료</span>`;
+      else if (app.status === "승인완료") statusBadge = `<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-1 rounded">✅ 승인완료</span>`;
+      else if (app.status === "반려됨") statusBadge = `<span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-1 rounded">반려됨</span>`;
+
+      tbody.insertAdjacentHTML(
+        "beforeend",
+        `<tr>
+          <td class="p-3 font-semibold text-slate-800">${job ? job.title : "일감"}</td>
+          <td class="p-3 font-medium text-slate-600">${app.subAccount}</td>
+          <td class="p-3 font-bold text-indigo-600">${job ? Number(job.reward).toLocaleString() : 0} P</td>
+          <td class="p-3">${statusBadge}</td>
+          <td class="p-3">${app.url ? `<a href="${app.url}" target="_blank" rel="noopener" class="text-indigo-600 underline">링크확인</a>` : "-"}</td>
+        </tr>`
+      );
+    });
+  }
+
+  closeModal("adminUsersModal");
+  openModal("adminUserDetailModal");
+}
+
 // ---------- 관리자: 일감 등록/수정/삭제 ----------
 export function openAddJobModal() {
   if (currentRole !== "admin") return;

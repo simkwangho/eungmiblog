@@ -34,6 +34,9 @@
         <button id="adminSubmitBtn" class="shrink-0 whitespace-nowrap bg-slate-800 hover:bg-slate-900 text-white text-xs md:text-sm font-bold px-2.5 py-2 md:px-3 rounded-xl transition flex items-center gap-1 shadow-sm">
           <span>⚙️</span> <span class="hidden md:inline">제출 관리자</span>
         </button>
+        <button id="adminUsersBtn" class="shrink-0 whitespace-nowrap bg-slate-600 hover:bg-slate-700 text-white text-xs md:text-sm font-bold px-2.5 py-2 md:px-3 rounded-xl transition flex items-center gap-1 shadow-sm">
+          <span>👥</span> <span class="hidden md:inline">회원 관리</span>
+        </button>
         <span class="h-4 w-[1px] bg-slate-200 mx-0.5 sm:mx-1 shrink-0"></span>
       </div>
 
@@ -291,6 +294,62 @@
   </div>
 </div>
 
+<div id="adminUsersModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-3xl w-full p-6 relative max-h-[85vh] flex flex-col">
+    <button data-close-modal="adminUsersModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <h3 class="text-lg font-bold text-slate-800 mb-2">👥 [관리자] 회원 관리</h3>
+    <div class="overflow-y-auto overflow-x-auto flex-1 border border-slate-100 rounded-xl p-2">
+      <table class="w-full text-left text-xs min-w-[640px]">
+        <thead class="bg-slate-50 text-slate-500 uppercase font-semibold">
+          <tr>
+            <th class="p-2.5">이름/닉네임</th>
+            <th class="p-2.5">이메일</th>
+            <th class="p-2.5">휴대폰번호</th>
+            <th class="p-2.5">보유 계정</th>
+            <th class="p-2.5">신청 건수</th>
+            <th class="p-2.5">유형</th>
+            <th class="p-2.5 text-right">액션</th>
+          </tr>
+        </thead>
+        <tbody id="adminUsersTable" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="adminUserDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 relative max-h-[90vh] flex flex-col">
+    <button data-close-modal="adminUserDetailModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
+    <div class="border-b border-slate-100 pb-4 mb-4">
+      <h3 class="text-xl font-bold text-slate-800">👤 회원 마이페이지 (관리자 열람)</h3>
+      <p id="adminUserDetailInfo" class="text-xs text-slate-500 mt-1"></p>
+    </div>
+    <div class="overflow-y-auto space-y-6 pr-1">
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+        <h4 class="text-sm font-bold text-slate-800 mb-2">📱 보유 리뷰어 계정</h4>
+        <div id="adminUserSubAccountList" class="flex flex-wrap gap-1.5"></div>
+      </div>
+      <div>
+        <h4 class="text-sm font-bold text-slate-800 mb-3">📋 전체 신청 및 진행 내역</h4>
+        <div class="overflow-x-auto border border-slate-100 rounded-xl">
+          <table class="w-full text-left text-xs min-w-[520px]">
+            <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+              <tr>
+                <th class="p-3">일감정보</th>
+                <th class="p-3">사용 계정</th>
+                <th class="p-3">리워드</th>
+                <th class="p-3">진행 상태</th>
+                <th class="p-3">제출 URL</th>
+              </tr>
+            </thead>
+            <tbody id="adminUserAppsTable" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   import { watchAuthState, wireLogoutButton } from "./js/auth.js";
   import * as app from "./js/app.js";
@@ -335,6 +394,7 @@
 
   document.getElementById("navMyPageBtn").addEventListener("click", () => app.openMyPage());
   document.getElementById("adminSubmitBtn").addEventListener("click", () => app.openAdminSubmitManager());
+  document.getElementById("adminUsersBtn").addEventListener("click", () => app.openAdminUsersManager());
   document.getElementById("addJobOpenBtn").addEventListener("click", () => app.openAddJobModal());
 </script>
 </body>
