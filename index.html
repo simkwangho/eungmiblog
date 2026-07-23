@@ -28,7 +28,7 @@
     </div>
     <div class="flex items-center gap-2">
       <div id="adminMenu" class="hidden flex items-center gap-2">
-        <button data-open-modal="addJobModal" class="js-open-modal bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
+        <button id="addJobOpenBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
           <span>＋</span> <span class="hidden md:inline">일감 등록</span>
         </button>
         <button id="adminSubmitBtn" class="bg-slate-800 hover:bg-slate-900 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
@@ -94,12 +94,6 @@
     <p class="col-span-full text-center text-slate-400 py-10">일감 목록을 불러오는 중입니다...</p>
   </div>
 </main>
-
-<section class="max-w-4xl mx-auto px-4 pb-16 text-sm text-slate-600 leading-relaxed break-keep">
-  <h2 class="text-base font-bold text-slate-800 mb-2">마켓링크는 이런 곳이에요</h2>
-  <p class="mb-2">마켓링크는 여러 프리랜서 마켓과 체험단 플랫폼에 올라오는 리뷰·체험단 성격의 일감을 매일 확인하고, 블로거와 리뷰어 분들이 한 곳에서 편하게 찾아볼 수 있도록 정리해 소개하는 큐레이션 사이트입니다. 신청부터 제출, 진행 상황 확인까지 마이페이지에서 한 번에 관리할 수 있습니다.</p>
-  <p>처음 방문하셨다면 <a href="guides/index.html" class="text-indigo-600 font-semibold underline">부업 가이드 모음</a>에서 프리랜서 마켓 가입 방법과 카테고리별 일감 정보를 먼저 확인해 보세요.</p>
-</section>
 
 <footer class="bg-white border-t border-slate-200 py-8 px-4">
   <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-4 text-xs text-slate-500">
@@ -216,8 +210,9 @@
 <div id="addJobModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
   <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative">
     <button data-close-modal="addJobModal" class="js-close-modal absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold">✕</button>
-    <h3 class="text-lg font-bold text-slate-800 mb-4">⚙️ [관리자] 신규 일감 등록</h3>
+    <h3 id="addJobModalTitle" class="text-lg font-bold text-slate-800 mb-4">⚙️ [관리자] 신규 일감 등록</h3>
     <form id="addJobForm" class="space-y-4">
+      <input type="hidden" id="editJobId">
       <div>
         <label class="block text-xs font-bold text-slate-600 mb-1">카테고리</label>
         <select id="jobCategory" class="w-full border border-slate-200 rounded-xl p-2.5 text-sm outline-none">
@@ -241,7 +236,7 @@
       </div>
       <div class="pt-2 flex gap-2">
         <button type="button" data-close-modal="addJobModal" class="js-close-modal w-1/2 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl text-sm">취소</button>
-        <button type="submit" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition">등록 완료</button>
+        <button type="submit" id="addJobSubmitBtn" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition">등록 완료</button>
       </div>
     </form>
   </div>
@@ -332,6 +327,7 @@
 
   document.getElementById("navMyPageBtn").addEventListener("click", () => app.openMyPage());
   document.getElementById("adminSubmitBtn").addEventListener("click", () => app.openAdminSubmitManager());
+  document.getElementById("addJobOpenBtn").addEventListener("click", () => app.openAddJobModal());
 </script>
 </body>
 </html>

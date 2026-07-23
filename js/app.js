@@ -9,6 +9,7 @@ import {
   doc,
   getDoc,
   updateDoc,
+  deleteDoc,
   onSnapshot,
   query,
   where,
@@ -95,6 +96,14 @@ export function renderJobs(jobArray) {
             신청하기
           </button>
         </div>
+        ${
+          currentRole === "admin"
+            ? `<div class="flex gap-1.5 mt-3 pt-3 border-t border-slate-100">
+                <button data-job-id="${job.id}" class="edit-job-btn flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[11px] font-bold py-1.5 rounded-lg transition">✏️ 수정</button>
+                <button data-job-id="${job.id}" class="delete-job-btn flex-1 bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold py-1.5 rounded-lg transition">🗑️ 삭제</button>
+              </div>`
+            : ""
+        }
       </div>
     `;
     container.insertAdjacentHTML("beforeend", cardHTML);
@@ -102,6 +111,12 @@ export function renderJobs(jobArray) {
 
   container.querySelectorAll(".apply-btn").forEach((btn) => {
     btn.addEventListener("click", () => openApplyModal(btn.dataset.jobId));
+  });
+  container.querySelectorAll(".edit-job-btn").forEach((btn) => {
+    btn.addEventListener("click", () => openEditJobModal(btn.dataset.jobId));
+  });
+  container.querySelectorAll(".delete-job-btn").forEach((btn) => {
+    btn.addEventListener("click", () => deleteJob(btn.dataset.jobId));
   });
 }
 
@@ -331,7 +346,31 @@ export async function changeStatus(appId, newStatus) {
   openAdminSubmitManager();
 }
 
-// ---------- 관리자: 일감 등록 ----------
+// ---------- 관리자: 일감 등록/수정/삭제 ----------
+export function openAddJobModal() {
+  if (currentRole !== "admin") return;
+  document.getElementById("addJobForm").reset();
+  document.getElementById("editJobId").value = "";
+  document.getElementById("addJobModalTitle").textContent = "⚙️ [관리자] 신규 일감 등록";
+  document.getElementById("addJobSubmitBtn").textContent = "등록 완료";
+  openModal("addJobModal");
+}
+
+export function openEditJobModal(jobId) {
+  if (currentRole !== "admin") return;
+  const job = jobsCache.find((j) => j.id === jobId);
+  if (!job) return;
+
+  document.getElementById("editJobId").value = jobId;
+  document.getElementById("jobCategory").value = job.category;
+  document.getElementById("jobTitle").value = job.title;
+  document.getElementById("jobDesc").value = job.desc;
+  document.getElementById("jobReward").value = job.reward;
+  document.getElementById("addJobModalTitle").textContent = "⚙️ [관리자] 일감 수정";
+  document.getElementById("addJobSubmitBtn").textContent = "수정 완료";
+  openModal("addJobModal");
+}
+
 export async function addNewJob(e) {
   e.preventDefault();
   if (currentRole !== "admin") {
@@ -339,17 +378,31 @@ export async function addNewJob(e) {
     return;
   }
 
-  await addDoc(collection(db, "jobs"), {
+  const editId = document.getElementById("editJobId").value;
+  const jobData = {
     category: document.getElementById("jobCategory").value,
     title: document.getElementById("jobTitle").value,
     desc: document.getElementById("jobDesc").value,
     reward: Number(document.getElementById("jobReward").value),
-    createdAt: Date.now(),
-  });
+  };
+
+  if (editId) {
+    await updateDoc(doc(db, "jobs", editId), jobData);
+    alert("일감이 수정되었습니다.");
+  } else {
+    await addDoc(collection(db, "jobs"), { ...jobData, createdAt: Date.now() });
+    alert("새로운 일감이 등록되었습니다.");
+  }
 
   closeModal("addJobModal");
   e.target.reset();
-  alert("새로운 일감이 등록되었습니다.");
+}
+
+export async function deleteJob(jobId) {
+  if (currentRole !== "admin") return;
+  const job = jobsCache.find((j) => j.id === jobId);
+  if (!confirm(`"${job ? job.title : "이 일감"}"을(를) 삭제하시겠습니까? 삭제 후 되돌릴 수 없습니다.`)) return;
+  await deleteDoc(doc(db, "jobs", jobId));
 }
 
 // ---------- 로그인/회원가입 폼 핸들러 ----------
