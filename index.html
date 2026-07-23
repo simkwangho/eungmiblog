@@ -26,33 +26,33 @@
       <a href="about.html" class="hover:text-indigo-600">소개</a>
       <a href="contact.html" class="hover:text-indigo-600">문의</a>
     </div>
-    <div class="flex items-center gap-2">
-      <div id="adminMenu" class="hidden flex items-center gap-2">
-        <button id="addJobOpenBtn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
+    <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+      <div id="adminMenu" class="hidden flex items-center gap-1 sm:gap-2 shrink-0">
+        <button id="addJobOpenBtn" class="shrink-0 whitespace-nowrap bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-2.5 py-2 md:px-3 rounded-xl transition flex items-center gap-1 shadow-sm">
           <span>＋</span> <span class="hidden md:inline">일감 등록</span>
         </button>
-        <button id="adminSubmitBtn" class="bg-slate-800 hover:bg-slate-900 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition flex items-center gap-1 shadow-sm">
+        <button id="adminSubmitBtn" class="shrink-0 whitespace-nowrap bg-slate-800 hover:bg-slate-900 text-white text-xs md:text-sm font-bold px-2.5 py-2 md:px-3 rounded-xl transition flex items-center gap-1 shadow-sm">
           <span>⚙️</span> <span class="hidden md:inline">제출 관리자</span>
         </button>
-        <span class="h-4 w-[1px] bg-slate-200 mx-1"></span>
+        <span class="h-4 w-[1px] bg-slate-200 mx-0.5 sm:mx-1 shrink-0"></span>
       </div>
 
-      <div id="authLoggedOut" class="flex items-center gap-2">
-        <a href="index.html" id="navLoginBtn" class="js-open-modal" data-open-modal="loginModal">
+      <div id="authLoggedOut" class="flex items-center gap-1 sm:gap-2 shrink-0">
+        <a href="index.html" id="navLoginBtn" class="js-open-modal shrink-0 whitespace-nowrap">
           <span class="text-slate-600 hover:text-indigo-600 text-xs md:text-sm font-semibold px-2 py-2 inline-block">로그인</span>
         </a>
-        <a href="index.html" id="navSignupBtn" class="js-open-modal" data-open-modal="signupModal">
+        <a href="index.html" id="navSignupBtn" class="js-open-modal shrink-0 whitespace-nowrap">
           <span class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm font-bold px-3 py-2 rounded-full transition inline-block">회원가입</span>
         </a>
       </div>
 
-      <div id="authLoggedIn" class="hidden flex items-center gap-2">
-        <button id="navMyPageBtn" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs md:text-sm font-bold px-3 py-2 rounded-xl transition flex items-center gap-1">
-          <span>👤</span> <span>마이페이지</span>
+      <div id="authLoggedIn" class="hidden flex items-center gap-1 sm:gap-2 shrink-0">
+        <button id="navMyPageBtn" class="shrink-0 whitespace-nowrap bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs md:text-sm font-bold px-2.5 py-2 md:px-3 rounded-xl transition flex items-center gap-1">
+          <span>👤</span> <span class="hidden md:inline">마이페이지</span>
         </button>
-        <button id="navLogoutBtn" class="text-xs text-slate-500 hover:text-rose-600 font-semibold px-1 py-1">로그아웃</button>
+        <button id="navLogoutBtn" class="shrink-0 whitespace-nowrap text-xs text-slate-500 hover:text-rose-600 font-semibold px-1 py-1">로그아웃</button>
       </div>
-      <button id="navMenuBtn" class="md:hidden p-2 -mr-1 text-xl leading-none text-slate-600 hover:text-indigo-600" aria-label="메뉴 열기">☰</button>
+      <button id="navMenuBtn" class="md:hidden shrink-0 p-2 -mr-1 text-xl leading-none text-slate-600 hover:text-indigo-600" aria-label="메뉴 열기">☰</button>
     </div>
   </div>
   <div id="navMobileMenu" class="hidden md:hidden border-t border-slate-100 px-4 py-3 flex flex-col gap-3 text-sm font-semibold text-slate-600 bg-white">
